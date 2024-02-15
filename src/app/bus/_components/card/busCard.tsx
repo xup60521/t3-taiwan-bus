@@ -1,6 +1,6 @@
 "use client"
 import { useAtom } from "jotai"
-import { useEffect, useState } from "react"
+import { useEffect, useId, useState } from "react"
 import { ScrollArea } from "~/components/ui/scroll-area"
 import * as BusAtom from "~/state/bus"
 import { api } from "~/trpc/react"
@@ -40,8 +40,8 @@ export default function BusCard() {
         <div className={`md:h-screen h-[50vh] md:w-[25rem] w-screen md:p-2 absolute left-0 top-0 transition duration-300 ease-in-out ${bus ? "" : "md:-translate-x-[100%]"}`} >
             <div className="w-full h-full rounded-lg opacity-90 bg-white text-black flex flex-col pb-1 gap-1">
                 <div className={`w-full ${isOneWay ? "" : "grid grid-cols-2"} gap-4 p-1`}>
-                    <button className={`text-center p-1 h-8 rounded-md font-semibold transition ${isOneWay ? "w-full" : ""} ${direction === "0" ? "bg-slate-200" : ""}`} onClick={()=>setDirection("0")}>{direction0_headto ? `往${direction0_headto}` : " "}</button>
-                    {isOneWay ? "" : (<button className={`text-center p-1 h-8 rounded-md font-semibold transition ${direction === "1" ? "bg-slate-200" : ""}`} onClick={()=>setDirection("1")}>{direction1_headto?`往${direction1_headto}`: " "}</button>)}
+                    <button className={`truncate	 text-center p-1 h-8 rounded-md font-semibold transition ${isOneWay ? "w-full" : ""} ${direction === "0" ? "bg-slate-200" : ""}`} onClick={()=>setDirection("0")}>{direction0_headto ? `往${direction0_headto}` : " "}</button>
+                    {isOneWay ? "" : (<button className={`truncate text-center p-1 h-8 rounded-md font-semibold transition ${direction === "1" ? "bg-slate-200" : ""}`} onClick={()=>setDirection("1")}>{direction1_headto?`往${direction1_headto}`: " "}</button>)}
                 </div>
                 <div className="px-1 h-4 overflow-hidden flex items-center">
                     <progress className=" w-full h-1 " max={14} value={seconds} />
@@ -58,6 +58,8 @@ export default function BusCard() {
 }
 
 const StopList = ({list}:{list?: BusEst[]}) => {
+    
+    const [t,setToggleStop] = useAtom(BusAtom.toggleStop)
     if (!list) {
         return ""
     }
@@ -72,9 +74,17 @@ const StopList = ({list}:{list?: BusEst[]}) => {
                         StopStatus={item.StopStatus} 
                         NextBusTime={item.NextBusTime}
                     />
-                    <span>
-                        {item.StopName.Zh_tw}
-                    </span>
+                    <button onClick={()=>{
+                        setToggleStop({
+                            stopName: item.StopName.Zh_tw,
+                            id: t.id+1
+                        })}}
+                        className="relative group"
+                    >
+                        <span>{item.StopName.Zh_tw}</span>
+                        <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all"></span>
+                                <span className="absolute -bottom-1 right-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all"></span>
+                    </button>
                 </div>
                 )
             })}

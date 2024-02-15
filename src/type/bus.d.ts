@@ -52,3 +52,32 @@ export type BusGeo = {
     UpdateTime:      string;
     VersionID:       number;
 }
+
+export type BusStops = {
+    RouteName:  Name;
+    Direction:  number;
+    Stops:      Stop[];
+    UpdateTime: string;
+    VersionID:  number;
+}
+
+
+type Stop = {
+    StopUID:          string;
+    StopID:           string;
+    StopName:         Name;
+    StopBoarding:     number;
+    StopSequence:     number;
+    StopPosition:     StopPosition;
+    StationID:        string;
+    StationGroupID:   string;
+    LocationCityCode: LocationCityCode;
+}
+
+type LocationCityCode = "TXG";
+
+type StopPosition = {
+    PositionLon: number;
+    PositionLat: number;
+    GeoHash:     string;
+}
