@@ -20,7 +20,11 @@ export default function StationCard() {
     const [,setPage] = useAtom(BusAtom.pageAtom)
     const [direction,setDirection] = useAtom(BusAtom.directionAtom)
     const [,setOpen] = useAtom(BusAtom.openPopupAtom)
-    const data = api.bus.getRoutePassBy.useQuery(station, {
+    const [city] = useAtom(BusAtom.cityAtom)
+    const data = api.bus.getRoutePassBy.useQuery({
+        stopName: station,
+        city
+    }, {
         enabled: Boolean(station),
         refetchInterval: 15 * 1000,
         onSuccess() {
@@ -119,7 +123,7 @@ const RemainningTime = ({
     NextBusTime: BusRoutePassBy["NextBusTime"]
 }) => {
 
-const min = Number(EstimateTime ?? 0) / 60
+const min = Math.floor( Number(EstimateTime ?? 0) / 60)
 const color = (min > 5 ? "bg-slate-100 text-slate-600" : "bg-red-200 text-red-900")
 if (EstimateTime) {
     return <div className={`w-20 p-1 text-center h-full rounded ${color}`}>

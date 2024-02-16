@@ -10,6 +10,7 @@ import "./progress.css"
 import {FiMenu} from "react-icons/fi"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
 import type { SetAtom } from "~/type/setAtom"
+import { useSearchParams } from "next/navigation"
 
 export default function BusCard() {
 
@@ -18,13 +19,14 @@ export default function BusCard() {
     const [headSign] = useAtom(BusAtom.headSignAtom)
     const [,setOpen] = useAtom(BusAtom.openDrawerAtom)
     const [,setPage] = useAtom(BusAtom.pageAtom)
+    const city = useSearchParams().get("city") ?? "Taichung"
     const [station,setStation] = useAtom(BusAtom.stationAtom)
     const [seconds, setSeconds] = useState(14);
-    const busEst = api.bus.getBusEst.useQuery(bus, {
+    const busEst = api.bus.getBusEst.useQuery({
+        bus,
+        city
+    }, {
         enabled: Boolean(bus),
-        trpc: {
-            ssr: true
-        },
         refetchInterval: 15 * 1000,
         onSuccess() {
             setSeconds(15)
@@ -62,6 +64,7 @@ export default function BusCard() {
                         <div className="w-full p-1 flex flex-col gap-1">
                             {direction === "0" && <StopList station={station} list={direction0} setPage={setPage} setStation={setStation} />}
                             {direction === "1" && <StopList station={station} list={direction1} setPage={setPage} setStation={setStation} />}
+                            {/* {JSON.stringify(busEst.data)} */}
                         </div>
                     </ScrollArea>
                 
@@ -141,7 +144,7 @@ const RemainningTime = ({
         NextBusTime: BusEst["NextBusTime"]
     }) => {
 
-    const min = Number(EstimateTime ?? 0) / 60
+    const min = Math.floor(Number(EstimateTime ?? 0) / 60)
     const color = (min > 5 ? "bg-slate-100 text-slate-600" : "bg-red-200 text-red-900")
     if (EstimateTime) {
         return <div className={`w-20 p-1 text-center h-full rounded ${color}`}>

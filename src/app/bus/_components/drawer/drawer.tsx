@@ -31,7 +31,7 @@ export default function DrawerSection({
     const [drawerOpen, setDrawerOpen] = useAtom(BusAtom.openDrawerAtom)
 
     const data = structuredClone(initBusList).sort((a,b)=>Number(RNN(a.RouteName.Zh_tw)) - Number(RNN(b.RouteName.Zh_tw))).map(item=>{
-        const headSign = `${item.RouteName.Zh_tw} ${item.SubRoutes[0].Headsign}`
+        const headSign = `${item.RouteName.Zh_tw} ${item.SubRoutes[0].Headsign ?? ""}`
         return {
             headSign,
             ...item

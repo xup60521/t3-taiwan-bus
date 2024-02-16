@@ -94,9 +94,7 @@ export type BusRoutePassBy = {
 }
 
 type BusStopSearchResult = {
-    StationName: {
-        Zh_tw: string;
-    };
+    StopName: Name;
     UpdateTime: string;
     VersionID: number;
 }

@@ -21,7 +21,7 @@ export default function Bus({
 
     const [page] = useAtom(BusAtom.pageAtom)
     const [openPopup] = useAtom(BusAtom.openPopupAtom)
-
+    
     return (
         <>
             <Suspense>

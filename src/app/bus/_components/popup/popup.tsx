@@ -8,6 +8,7 @@ import { FaSearch } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react"
 import { type BusStopSearchResult } from "~/type/bus"
 import { ScrollArea } from "~/components/ui/scroll-area"
+import { useSearchParams } from "next/navigation"
 
 export default function PopupSection() {
 
@@ -15,9 +16,10 @@ export default function PopupSection() {
     const [result, setResult] = useState<BusStopSearchResult[] | null>(null)
     const [,setStation] = useAtom(BusAtom.stationAtom)
     const inputRef = useRef<HTMLInputElement>(null)
+    const city = useSearchParams().get("city")
     const handleSearch = async () => {
         if (inputRef.current?.value) {
-            const res = await fetch(`/api/searchStop?q=${inputRef.current.value}`).then(res=>res)
+            const res = await fetch(`/api/searchStop?city=${city}&q=${inputRef.current.value}`).then(res=>res)
             const data = await res.json() as BusStopSearchResult[]
             setResult([...data])
         }
@@ -45,7 +47,7 @@ export default function PopupSection() {
                 </div>
                 <ScrollArea className="w-full">
                     <div className="w-full max-h-[70vh]">
-                        {result?.map(d=>d.StationName.Zh_tw).filter((d,i,arr)=>arr.indexOf(d)===i).map((item, index)=>{
+                        {result?.map(d=>d.StopName.Zh_tw).filter((d,i,arr)=>arr.indexOf(d)===i).map((item, index)=>{
                             return (
                                 <>
                                     {index !== 0 && <div className="w-full border-t-[0.05rem] border-slate-100 mx-1" />}

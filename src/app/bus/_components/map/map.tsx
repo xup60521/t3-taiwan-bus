@@ -7,10 +7,12 @@ import { useAtom } from "jotai"
 import type { BusGeo, BusStops } from '~/type/bus'
 import { Icon } from 'leaflet'
 import ShowMarker from './marker'
+import { useSearchParams } from 'next/navigation'
 
 export default function Map() {
 
     const position = useMemo(()=>({ lat: 24.137396608878987, lng: 120.68692065044608 }), [])
+    const [city] = useAtom(BusAtom.cityAtom)
 
     return (
         <MapContainer center={position} zoom={13} scrollWheelZoom={true} className="w-full h-full z-0" >
@@ -19,14 +21,14 @@ export default function Map() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 className="absolute right-0"
             />
-            <ShowPolyLines />
-            <ShowStops />
+            <ShowPolyLines city={city} />
+            <ShowStops city={city} />
             
         </MapContainer>
     )
 }
 
-const ShowPolyLines = () => {
+const ShowPolyLines = ({city}:{city:string}) => {
 
     const [bus] = useAtom(BusAtom.busAtom)
     const [direction] = useAtom(BusAtom.directionAtom)
@@ -53,7 +55,7 @@ const ShowPolyLines = () => {
     useEffect(()=>{
         if (bus) {
             const fetchData = async (bus:string) => {
-                const res = await fetch(`/api/getBusStops?bus=${bus}&type=geo`).then(res=>res)
+                const res = await fetch(`/api/getBusStops?bus=${bus}&type=geo&city=${city}`).then(res=>res)
                 const data = await res.json() as BusGeo[]
                 setBusShape([...data])
             }
@@ -82,7 +84,7 @@ const ShowPolyLines = () => {
     return ""
 }
 
-const ShowStops = () => {
+const ShowStops = ({city}:{city:string}) => {
     const [bus] = useAtom(BusAtom.busAtom)
     const [direction] = useAtom(BusAtom.directionAtom)
     const [headSign] = useAtom(BusAtom.headSignAtom)
@@ -92,7 +94,7 @@ const ShowStops = () => {
     useEffect(()=>{
         if (bus) {
             const fetchData = async (bus:string) => {
-                const res = await fetch(`/api/getBusStops?bus=${bus}&type=stops`).then(res=>res)
+                const res = await fetch(`/api/getBusStops?bus=${bus}&type=stops&city=${city}`).then(res=>res)
                 const data = await res.json()  as BusStops[]
                 setBusStops([...data])
             }

@@ -7,10 +7,11 @@ import type { BusGeo, BusStops } from "~/type/bus";
 export async function GET(req:NextRequest) {
     const getType = req.nextUrl.searchParams.get("type")
     const input = req.nextUrl.searchParams.get("bus")
+    const city = req.nextUrl.searchParams.get("city")
     if (getType === "geo") {
         const access_token_res = (await get_access_token())
         const access_token = access_token_res.access_token
-        const res = await fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/Shape/City/Taichung/${input}?$select=Direction,RouteName,Geometry&$filter=RouteName/Zh_tw eq '${input}'&$format=JSON`, {
+        const res = await fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/Shape/City/${city}/${input}?$select=Direction,RouteName,Geometry&$filter=RouteName/Zh_tw eq '${input}'&$format=JSON`, {
             headers: {
                 "Authorization": `Bearer ${access_token}`
             },
@@ -24,7 +25,7 @@ export async function GET(req:NextRequest) {
     if (getType === "stops") {
         const access_token_res = (await get_access_token())
         const access_token = access_token_res.access_token
-        const res = await fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/StopOfRoute/City/Taichung/${input}?$select=RouteName,Direction,Stops&$filter=RouteName/Zh_tw eq '${input}'&$format=JSON`, {
+        const res = await fetch(`https://tdx.transportdata.tw/api/basic/v2/Bus/StopOfRoute/City/${city}/${input}?$select=RouteName,Direction,Stops&$filter=RouteName/Zh_tw eq '${input}'&$format=JSON`, {
             headers: {
                 "Authorization": `Bearer ${access_token}`
             },
