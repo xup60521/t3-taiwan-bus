@@ -84,7 +84,7 @@ return  (
                     />
                     <button onClick={()=>{
                         setBus(item.RouteName.Zh_tw)
-                        setDirection(String(item.Direction))
+                        setDirection(String(item.Direction === 255 ? 0 : item.Direction))
                     }}
                         className="relative group"
                     >
@@ -99,7 +99,7 @@ return  (
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuItem onClick={()=>{
-                                setDirection(String(item.Direction))
+                                setDirection(String(item.Direction === 255 ? 0 : item.Direction))
                                 setBus(item.RouteName.Zh_tw)
                                 setPage("bus")
                             }}>

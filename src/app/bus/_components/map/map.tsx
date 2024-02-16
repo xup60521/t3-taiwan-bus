@@ -7,7 +7,6 @@ import { useAtom } from "jotai"
 import type { BusGeo, BusStops } from '~/type/bus'
 import { Icon } from 'leaflet'
 import ShowMarker from './marker'
-import { useSearchParams } from 'next/navigation'
 
 export default function Map() {
 
@@ -66,7 +65,7 @@ const ShowPolyLines = ({city}:{city:string}) => {
     if (!busShape || bus === "" || direction === "") {
         return ""
     }
-    const positionStr = busShape[Number(direction)]?.Geometry
+    const positionStr = busShape[Number(direction)]?.Geometry ?? busShape[0]?.Geometry
     if (positionStr) {
         const regex = /[A-Z()]/g
         const positionArr = positionStr.replace(regex, "").split(",").map(f=>f.split(" ").reverse().map(item=>Number(item))) as [number, number][]

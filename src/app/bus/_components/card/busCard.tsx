@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { ScrollArea } from "~/components/ui/scroll-area"
 import * as BusAtom from "~/state/bus"
 import { api } from "~/trpc/react"
-import type { BusEst } from "~/type/bus"
+import type { BusEst, BusStops } from "~/type/bus"
 import "./progress.css"
 import {FiMenu} from "react-icons/fi"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
@@ -22,6 +22,7 @@ export default function BusCard() {
     const city = useSearchParams().get("city") ?? "Taichung"
     const [station,setStation] = useAtom(BusAtom.stationAtom)
     const [seconds, setSeconds] = useState(14);
+    const [busStops] = useAtom(BusAtom.busStopsAtom)
     const busEst = api.bus.getBusEst.useQuery({
         bus,
         city
@@ -32,11 +33,16 @@ export default function BusCard() {
             setSeconds(15)
         },
     })
+    const busStops0 = busStops?.find(item=>item.Direction === 0)?.Stops
+    const headto0 = busStops0?.sort((a,b)=> b.StopSequence-a.StopSequence)[0]?.StopName.Zh_tw
+    const busStops1 = busStops?.find(item=>item.Direction === 1)?.Stops
+    const headto1 = busStops1?.sort((a,b)=> b.StopSequence-a.StopSequence)[0]?.StopName.Zh_tw
     const direction0 = busEst.data?.filter(item=>item.Direction === 0)
     const direction0_headto = direction0?.sort((a,b)=> b.StopSequence-a.StopSequence)[0]?.StopName.Zh_tw
     const direction1 = busEst.data?.filter(item=>item.Direction === 1)
     const direction1_headto = direction0?.sort((b,a)=> b.StopSequence-a.StopSequence)[0]?.StopName.Zh_tw
-    const isOneWay = ((direction0?.length ?? 0 ) > 0 && (direction1?.length ?? 0) > 0 ? false : true)
+    const isOneWay = ((busStops0?.length ?? 0 ) > 0 && (busStops1?.length ?? 0) > 0 ? false : true)
+    
 
     useEffect(()=>{
         
@@ -53,8 +59,8 @@ export default function BusCard() {
                 
                 
                     <div className={`w-full ${isOneWay ? "" : "grid grid-cols-2"} gap-4 p-1 relative`}>
-                        <button className={`truncate	 text-center p-1 h-8 rounded-md font-semibold transition ${isOneWay ? "w-full" : ""} z-20`} onClick={()=>setDirection("0")}>{direction0_headto ? `往${direction0_headto}` : " "}</button>
-                        {isOneWay ? "" : (<button className={`truncate text-center p-1 h-8 rounded-md font-semibold transition z-20`} onClick={()=>setDirection("1")}>{direction1_headto?`往${direction1_headto}`: " "}</button>)}
+                        <button className={`truncate	 text-center p-1 h-8 rounded-md font-semibold transition ${isOneWay ? "w-full" : ""} z-20`} onClick={()=>setDirection("0")}>{headto0 ? `往${headto0}` : " "}</button>
+                        {isOneWay ? "" : (<button className={`truncate text-center p-1 h-8 rounded-md font-semibold transition z-20`} onClick={()=>setDirection("1")}>{headto1?`往${headto1}`: " "}</button>)}
                         {!isOneWay && Boolean(busEst.data) ? <div className={`z-10 w-[calc(50%-0.75rem)] absolute left-1 top-1 h-8 rounded-md bg-slate-200 transition-all duration-300 ${direction === "1" ? "translate-x-[calc(100%+1rem)]" : ""} `} /> : null}
                     </div>
                     <div className="px-1 h-4 overflow-hidden flex items-center">
@@ -62,8 +68,8 @@ export default function BusCard() {
                     </div>
                     <ScrollArea className="w-full">
                         <div className="w-full p-1 flex flex-col gap-1">
-                            {direction === "0" && <StopList station={station} list={direction0} setPage={setPage} setStation={setStation} />}
-                            {direction === "1" && <StopList station={station} list={direction1} setPage={setPage} setStation={setStation} />}
+                            {direction === "0" && <StopList stops={busStops0} station={station} list={direction0} setPage={setPage} setStation={setStation} />}
+                            {direction === "1" && <StopList stops={busStops1} station={station} list={direction1} setPage={setPage} setStation={setStation} />}
                             {/* {JSON.stringify(busEst.data)} */}
                         </div>
                     </ScrollArea>
@@ -79,12 +85,14 @@ const StopList = ({
     list,
     setPage,
     setStation,
-    station
+    station,
+    stops
 }:{
     list?: BusEst[],
     setPage: SetAtom<[SetStateAction<string>], void>,
     setStation: SetAtom<[SetStateAction<string>], void>,
-    station: string
+    station: string,
+    stops?: BusStops["Stops"]
 }) => {
     
     const [t,setToggleStop] = useAtom(BusAtom.toggleStop)
@@ -95,13 +103,14 @@ const StopList = ({
 
     return (
         <>
-            {list.sort((a,b)=>a.StopSequence-b.StopSequence).map(item=>{
+            {stops?.sort((a,b)=>a.StopSequence-b.StopSequence).map(item=>{
+                const g = list.find(d=>d.StopSequence===item.StopSequence)
                 return (
                 <div className="w-full flex justify-between" key={`${item.StopSequence} ${item.StopName.Zh_tw}`}>
                     <div className="h-full flex items-center gap-2">
                         <RemainningTime 
-                            EstimateTime={item.EstimateTime} 
-                            NextBusTime={item.NextBusTime}
+                            EstimateTime={g?.EstimateTime} 
+                            NextBusTime={g?.NextBusTime}
                         />
                         <button onClick={()=>{
                             setToggleStop({
