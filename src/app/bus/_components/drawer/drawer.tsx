@@ -64,21 +64,26 @@ export default function DrawerSection({
                         }
                     }} />
                     <ScrollArea className="h-[60vh] w-full">
-                        <div className="w-full flex flex-col gap-2">
-                            {data.map(item => {
-                                return <div 
-                                key={item.SubRoutes[0].SubRouteName.Zh_tw} 
-                                onClick={()=>{
-                                    setBus(item.RouteName.Zh_tw)
-                                    
-                                    setDirection("0")
-                                    closeBtnRef.current?.click()
-                                    setQString("")
-                                }}
-                                className="p-2 rounded-md hover:bg-slate-100 hover:cursor-pointer transition-all"
-                                >
-                                    {item.headSign}
-                                </div>
+                        <div className="w-full flex flex-col">
+                            {data.map((item, index) => {
+                                return (
+                                <>
+                                    {index !== 0 && <div className="w-full border-t-[0.05rem] border-slate-100 mx-1" />}
+                                    <div 
+                                        key={item.SubRoutes[0].SubRouteName.Zh_tw} 
+                                        onClick={()=>{
+                                            setBus(item.RouteName.Zh_tw)
+                                            
+                                            setDirection("0")
+                                            closeBtnRef.current?.click()
+                                            setQString("")
+                                        }}
+                                        className="p-2 py-3 rounded-md hover:bg-slate-100 hover:cursor-pointer transition-all"
+                                    >
+                                        {item.headSign}
+                                    </div>
+                                </>
+                                )
                             })}
                         </div>
                     </ScrollArea>

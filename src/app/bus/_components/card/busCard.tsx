@@ -18,7 +18,7 @@ export default function BusCard() {
     const [headSign] = useAtom(BusAtom.headSignAtom)
     const [,setOpen] = useAtom(BusAtom.openDrawerAtom)
     const [,setPage] = useAtom(BusAtom.pageAtom)
-    const [,setStation] = useAtom(BusAtom.stationAtom)
+    const [station,setStation] = useAtom(BusAtom.stationAtom)
     const [seconds, setSeconds] = useState(14);
     const busEst = api.bus.getBusEst.useQuery(bus, {
         enabled: Boolean(bus),
@@ -48,20 +48,23 @@ export default function BusCard() {
         <div className={`box-border md:h-screen h-[50vh] md:w-[25rem] w-screen md:p-2 md:absolute left-0 bottom-0 transition duration-300 ease-in-out `} >
             <div className="w-full h-full rounded-lg md:opacity-90 bg-white text-black flex flex-col pb-1 gap-1">
                 <button className="h-8 w-full p-1 bg-slate-700 text-white font-bold md:rounded-t-lg" onClick={()=>setOpen(true)}>{headSign ? headSign : "選擇公車..."}</button>
-                <div className={`w-full ${isOneWay ? "" : "grid grid-cols-2"} gap-4 p-1 relative`}>
-                    <button className={`truncate	 text-center p-1 h-8 rounded-md font-semibold transition ${isOneWay ? "w-full" : ""} z-20`} onClick={()=>setDirection("0")}>{direction0_headto ? `往${direction0_headto}` : " "}</button>
-                    {isOneWay ? "" : (<button className={`truncate text-center p-1 h-8 rounded-md font-semibold transition z-20`} onClick={()=>setDirection("1")}>{direction1_headto?`往${direction1_headto}`: " "}</button>)}
-                    {!isOneWay && Boolean(busEst.data) ? <div className={`z-10 w-[calc(50%-0.75rem)] absolute left-1 top-1 h-8 rounded-md bg-slate-200 transition-all duration-300 ${direction === "1" ? "translate-x-[calc(100%+1rem)]" : ""} `} /> : null}
-                </div>
-                <div className="px-1 h-4 overflow-hidden flex items-center">
-                    <progress className=" w-full h-1 " max={14} value={seconds} />
-                </div>
-                <ScrollArea className="w-full">
-                    <div className="w-full p-1 flex flex-col gap-1">
-                        {direction === "0" && <StopList list={direction0} setPage={setPage} setStation={setStation} />}
-                        {direction === "1" && <StopList list={direction1} setPage={setPage} setStation={setStation} />}
+                
+                
+                    <div className={`w-full ${isOneWay ? "" : "grid grid-cols-2"} gap-4 p-1 relative`}>
+                        <button className={`truncate	 text-center p-1 h-8 rounded-md font-semibold transition ${isOneWay ? "w-full" : ""} z-20`} onClick={()=>setDirection("0")}>{direction0_headto ? `往${direction0_headto}` : " "}</button>
+                        {isOneWay ? "" : (<button className={`truncate text-center p-1 h-8 rounded-md font-semibold transition z-20`} onClick={()=>setDirection("1")}>{direction1_headto?`往${direction1_headto}`: " "}</button>)}
+                        {!isOneWay && Boolean(busEst.data) ? <div className={`z-10 w-[calc(50%-0.75rem)] absolute left-1 top-1 h-8 rounded-md bg-slate-200 transition-all duration-300 ${direction === "1" ? "translate-x-[calc(100%+1rem)]" : ""} `} /> : null}
                     </div>
-                </ScrollArea>
+                    <div className="px-1 h-4 overflow-hidden flex items-center">
+                        <progress className=" w-full h-1 " max={14} value={seconds} />
+                    </div>
+                    <ScrollArea className="w-full">
+                        <div className="w-full p-1 flex flex-col gap-1">
+                            {direction === "0" && <StopList station={station} list={direction0} setPage={setPage} setStation={setStation} />}
+                            {direction === "1" && <StopList station={station} list={direction1} setPage={setPage} setStation={setStation} />}
+                        </div>
+                    </ScrollArea>
+                
             </div>
         </div>
     )
@@ -72,11 +75,13 @@ export default function BusCard() {
 const StopList = ({
     list,
     setPage,
-    setStation
+    setStation,
+    station
 }:{
     list?: BusEst[],
     setPage: SetAtom<[SetStateAction<string>], void>,
     setStation: SetAtom<[SetStateAction<string>], void>,
+    station: string
 }) => {
     
     const [t,setToggleStop] = useAtom(BusAtom.toggleStop)
@@ -103,8 +108,8 @@ const StopList = ({
                             className="relative group"
                         >
                             <span>{item.StopName.Zh_tw}</span>
-                            <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all"></span>
-                                    <span className="absolute -bottom-1 right-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all"></span>
+                            <span className={`absolute -bottom-1 left-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all ${station === item.StopName.Zh_tw ? "w-1/2" : ""}`}></span>
+                            <span className={`absolute -bottom-1 right-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all ${station === item.StopName.Zh_tw ? "w-1/2" : ""}`}></span>
                         </button>
                     </div>
                     <DropdownMenu>

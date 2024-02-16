@@ -16,9 +16,10 @@ export default function StationCard() {
 
     const [station] = useAtom(BusAtom.stationAtom)
     const [seconds, setSeconds] = useState(14);
-    const [,setBus] = useAtom(BusAtom.busAtom)
+    const [bus,setBus] = useAtom(BusAtom.busAtom)
     const [,setPage] = useAtom(BusAtom.pageAtom)
-    const [,setDirection] = useAtom(BusAtom.directionAtom)
+    const [direction,setDirection] = useAtom(BusAtom.directionAtom)
+    const [,setOpen] = useAtom(BusAtom.openPopupAtom)
     const data = api.bus.getRoutePassBy.useQuery(station, {
         enabled: Boolean(station),
         refetchInterval: 15 * 1000,
@@ -38,13 +39,13 @@ export default function StationCard() {
     return (
         <div className={`box-border md:h-screen h-[50%] md:w-[25rem] w-screen md:p-2 md:absolute left-0 bottom-0 transition duration-300 ease-in-out `} >
             <div className="w-full h-full rounded-lg md:opacity-90 bg-white text-black flex flex-col pb-1 gap-1">
-                <button className="h-8 w-full p-1 bg-slate-700 text-white font-bold md:rounded-t-lg">{station ? station : "選擇站牌..."}</button>
+                <button onClick={()=>setOpen(true)} className="h-8 w-full p-1 bg-slate-700 text-white font-bold md:rounded-t-lg">{station ? station : "選擇站牌..."}</button>
                 <div className="px-1 h-4 overflow-hidden flex items-center">
                     <progress className=" w-full h-1 " max={14} value={seconds} />
                 </div>
                 <ScrollArea className="w-full">
                     <div className="w-full p-1 flex flex-col gap-1">
-                        <StopList setPage={setPage} list={data.data} setBus={setBus} setDirection={setDirection} />
+                        <BusList bus={bus} direction={direction} setPage={setPage} list={data.data} setBus={setBus} setDirection={setDirection} />
                     </div>
                 </ScrollArea>
             </div>
@@ -52,16 +53,20 @@ export default function StationCard() {
     )
 }
 
-const StopList = ({
+const BusList = ({
     list,
     setBus,
     setDirection,
-    setPage
+    setPage,
+    bus,
+    direction
 }: {
     list?: BusRoutePassBy[],
     setBus: SetAtom<[SetStateAction<string>], void>
     setDirection: SetAtom<[SetStateAction<string>], void>,
-    setPage: SetAtom<[SetStateAction<string>], void>
+    setPage: SetAtom<[SetStateAction<string>], void>,
+    bus: string,
+    direction: string
 }) => {
 return  (  
     <>
@@ -80,8 +85,8 @@ return  (
                         className="relative group"
                     >
                         <span>{item.RouteName.Zh_tw}</span>
-                        <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all"></span>
-                        <span className="absolute -bottom-1 right-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all"></span>
+                        <span className={`absolute -bottom-1 left-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all ${(bus === item.RouteName.Zh_tw && direction === `${item.Direction}`) && "w-1/2"}`}></span>
+                        <span className={`absolute -bottom-1 right-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all ${(bus === item.RouteName.Zh_tw && direction === `${item.Direction}`) && "w-1/2"}`}></span>
                     </button>
                 </div>
                 <DropdownMenu>
