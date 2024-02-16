@@ -10,12 +10,18 @@ export default function SyncSearchParams() {
     const searchParams = useSearchParams()
     const busParam = searchParams.get("bus")
     const directionParam = searchParams.get("direction")
+    const cityParam = searchParams.get("city")
     const stationParam = searchParams.get("station")
     const pageParam = searchParams.get("page")
     const [bus, setBus] = useAtom(BusAtom.busAtom)
     const [direction, setDirection] = useAtom(BusAtom.directionAtom)
     const [station, setStation] = useAtom(BusAtom.stationAtom)
     const [page, setPage] = useAtom(BusAtom.pageAtom)
+    const [city, setCity] = useAtom(BusAtom.cityAtom)
+
+    if (!city) {
+        setCity("Taichung")
+    }
 
     useEffect(()=>{
         if (busParam) {
@@ -30,15 +36,18 @@ export default function SyncSearchParams() {
         if (pageParam) {
             setPage(pageParam)
         }
+        if (cityParam) {
+            setCity(cityParam)
+        }
     }, [])
 
     useEffect(()=>{
         if (bus!=="" 
         &&  direction!=="" 
              ) {
-            router.push(`?bus=${bus}&direction=${direction}&station=${station}&page=${page}`)
+            router.push(`?bus=${bus}&direction=${direction}&station=${station}&page=${page}&city=${city}`)
         }
-    }, [bus, direction, router, station, page])
+    }, [bus, direction, router, station, page, city])
 
     return <></>
 }
