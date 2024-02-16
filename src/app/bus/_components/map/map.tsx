@@ -1,5 +1,5 @@
 "use client"
-import { MapContainer, Marker, TileLayer, Polyline, Tooltip, useMap, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Polyline, Tooltip, useMap } from 'react-leaflet'
 import "leaflet/dist/leaflet.css"
 import { useEffect, useMemo, useState } from "react"
 import * as BusAtom from "~/state/bus"
@@ -11,13 +11,9 @@ import ShowMarker from './marker'
 export default function Map() {
 
     const position = useMemo(()=>({ lat: 24.137396608878987, lng: 120.68692065044608 }), [])
-    const icon = new Icon({
-        iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-        iconSize: [35,35],
-    }) 
 
     return (
-        <MapContainer center={position} zoom={13} scrollWheelZoom={true} className="w-full h-full z-0" zoomControl={false} >
+        <MapContainer center={position} zoom={13} scrollWheelZoom={true} className="w-full h-full z-0" >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

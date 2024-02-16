@@ -1,8 +1,9 @@
 'use client'
 
-import L, { Icon } from "leaflet";
+import { Icon } from "leaflet";
+import type L from "leaflet"
 import { useEffect, useRef } from "react";
-import { Marker, Popup, PopupProps, Tooltip } from "react-leaflet";
+import { Marker, Popup, Tooltip } from "react-leaflet";
 import type { BusStops } from "~/type/bus";
 import type { Unpacked } from "~/type/unpack";
 import {useAtom} from "jotai"

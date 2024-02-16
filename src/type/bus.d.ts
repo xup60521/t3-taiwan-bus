@@ -81,3 +81,14 @@ type StopPosition = {
     PositionLat: number;
     GeoHash:     string;
 }
+
+export type BusRoutePassBy = {
+    RouteName:     Name;
+    Direction:     number;
+    EstimateTime?: number;
+    StopSequence:  number;
+    StopStatus:    number;
+    NextBusTime?:  string;
+    SrcUpdateTime: string;
+    UpdateTime:    string;
+}

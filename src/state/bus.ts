@@ -9,3 +9,6 @@ export const toggleStop = atom<{
     stopName?: string,
     id: number;
 }>({stopName: undefined, id:0})
+export const openDrawerAtom = atom(false)
+export const stationAtom = atom("")
+export const pageAtom = atom("bus")
