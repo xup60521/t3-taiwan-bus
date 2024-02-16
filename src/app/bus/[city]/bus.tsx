@@ -14,14 +14,13 @@ import PopupSection from "~/app/bus/_components/popup/popup"
 const Map = dynamic(()=>import("~/app/bus/_components/map/map"), {ssr: false})
 
 export default function Bus({
-    initBusList
+    initBusList,
 }: {
-    initBusList: BusList[]
+    initBusList: BusList[],
 }) {
 
     const [page] = useAtom(BusAtom.pageAtom)
     const [openPopup] = useAtom(BusAtom.openPopupAtom)
-
 
     return (
         <>
