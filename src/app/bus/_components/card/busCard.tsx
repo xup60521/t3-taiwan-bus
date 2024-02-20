@@ -104,7 +104,10 @@ const StopList = ({
     return (
         <>
             {stops?.sort((a,b)=>a.StopSequence-b.StopSequence).map(item=>{
-                const g = list.find(d=>d.StopSequence===item.StopSequence)
+                let g = list.find(d=>d.StopSequence===item.StopSequence)
+                if (!g) {
+                    g = list.find(d=>d.StopName.Zh_tw === item.StopName.Zh_tw)
+                }
                 return (
                 <div className="w-full flex justify-between" key={`${item.StopSequence} ${item.StopName.Zh_tw}`}>
                     <div className="h-full flex items-center gap-2">
