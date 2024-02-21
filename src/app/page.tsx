@@ -31,7 +31,7 @@ export default function Home() {
         <div className="w-full grid grid-cols-2 h-[70vh] items-center">
           {list.map(item=>{
             return <div key={item} className="text-center">
-              <Link href={`/bus?city=${item}`}>{item}</Link>
+              <a href={`/bus?city=${item}`}>{item}</a>
             </div>
           })}
         </div>
