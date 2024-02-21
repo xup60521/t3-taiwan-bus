@@ -12,7 +12,7 @@ const inter = Inter({
 export const metadata = {
   title: "T3 Taiwan Bus",
   description: "Taiwan Bus Tracker built with create-t3-app",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/icon.png" }],
 };
 
 export default function RootLayout({
