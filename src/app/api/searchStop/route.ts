@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import {stopList} from "~/lib/stopList"
 import { get_access_token } from "~/server/api/routers/bus";
-import { BusStopSearchResult } from "~/type/bus";
+import { type BusStopSearchResult } from "~/type/bus";
 
 export async function GET(req:NextRequest) {
     const q = req.nextUrl.searchParams.get("q")

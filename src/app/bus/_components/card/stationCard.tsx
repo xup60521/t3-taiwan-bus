@@ -19,7 +19,7 @@ export default function StationCard() {
     const [bus,setBus] = useAtom(BusAtom.busAtom)
     const [,setPage] = useAtom(BusAtom.pageAtom)
     const [direction,setDirection] = useAtom(BusAtom.directionAtom)
-    const [,setOpen] = useAtom(BusAtom.openPopupAtom)
+    const [,setOpen] = useAtom(BusAtom.openStationPopupAtom)
     const [city] = useAtom(BusAtom.cityAtom)
     const data = api.bus.getRoutePassBy.useQuery({
         stopName: station,

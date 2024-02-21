@@ -9,15 +9,16 @@ import PageController from "~/app/bus/_components/pageController/pageController"
 import * as BusAtom from "~/state/bus"
 import { useAtom } from "jotai"
 import StationCard from "~/app/bus/_components/card/stationCard"
-import PopupSection from "~/app/bus/_components/popup/popup"
+import PopupSection from "~/app/bus/_components/popup/PopupSetStation"
 import { useSearchParams } from "next/navigation"
+import NoteCard from "./_components/card/noteCard"
 
 const Map = dynamic(()=>import("~/app/bus/_components/map/map"), {ssr: false})
 
 export default function Bus() {
 
     const [page] = useAtom(BusAtom.pageAtom)
-    const [openPopup] = useAtom(BusAtom.openPopupAtom)
+    const [openPopup] = useAtom(BusAtom.openStationPopupAtom)
     const [initBusList, setinitBusList] = useState<BusList[] | null>(null)
     const city = useSearchParams().get("city")
 
@@ -41,6 +42,7 @@ export default function Bus() {
                 <Map />
                 {page==="bus" && <BusCard />}
                 {page==="station" && <StationCard />}
+                {page==="note" && <NoteCard />}
                 <PageController />
                 <PopupSection />
             </main>

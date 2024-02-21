@@ -10,9 +10,9 @@ import { type BusStopSearchResult } from "~/type/bus"
 import { ScrollArea } from "~/components/ui/scroll-area"
 import { useSearchParams } from "next/navigation"
 
-export default function PopupSection() {
+export default function PopupSetStation() {
 
-    const [open, setOpen] = useAtom(BusAtom.openPopupAtom)
+    const [open, setOpen] = useAtom(BusAtom.openStationPopupAtom)
     const [result, setResult] = useState<BusStopSearchResult[] | null>(null)
     const [,setStation] = useAtom(BusAtom.stationAtom)
     const inputRef = useRef<HTMLInputElement>(null)
