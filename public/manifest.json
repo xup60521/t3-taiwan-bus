@@ -1,8 +1,7 @@
 {
-    "id": "any_id",
-    "name": "Next.js PWA - Tutorial",
-    "short_name": "Next PWA",
-    "description": "This next.js app is a PWA.",
+    "name": "台灣等公車 Bus Waiting Taiwan",
+    "short_name": "TW Bus",
+    "description": "Bus waitingf app with PWA",
     "icons": [
       {
         "src": "./icon-384x384.png",
