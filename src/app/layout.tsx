@@ -10,10 +10,10 @@ const inter = Inter({
 });
 
 
-const APP_NAME = "PWA App";
-const APP_DEFAULT_TITLE = "My Awesome PWA App";
-const APP_TITLE_TEMPLATE = "%s - PWA App";
-const APP_DESCRIPTION = "Best PWA app in the world!";
+const APP_NAME = "台灣等公車";
+const APP_DEFAULT_TITLE = "台灣等公車";
+const APP_TITLE_TEMPLATE = "%s - PWA";
+const APP_DESCRIPTION = "waiting for bus";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
