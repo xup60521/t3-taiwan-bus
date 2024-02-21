@@ -7,6 +7,8 @@ import { useAtom } from "jotai"
 import type { BusGeo, BusStops } from '~/type/bus'
 import { Icon } from 'leaflet'
 import ShowMarker from './marker'
+import { getBusStops } from '~/server_action/getBusStops'
+import { getBusShape } from '~/server_action/getBusShape'
 
 export default function Map() {
 
@@ -53,12 +55,7 @@ const ShowPolyLines = ({city}:{city:string}) => {
 
     useEffect(()=>{
         if (bus) {
-            const fetchData = async (bus:string) => {
-                const res = await fetch(`/api/getBusStops?bus=${bus}&type=geo&city=${city}`).then(res=>res)
-                const data = await res.json() as BusGeo[]
-                setBusShape([...data])
-            }
-            fetchData(bus).catch(err=>alert(err))
+            getBusShape(bus, city).then(data=>setBusShape([...data])).catch(err=>alert(err))
         }
     },[bus])
 
@@ -86,18 +83,11 @@ const ShowPolyLines = ({city}:{city:string}) => {
 const ShowStops = ({city}:{city:string}) => {
     const [bus] = useAtom(BusAtom.busAtom)
     const [direction] = useAtom(BusAtom.directionAtom)
-    const [headSign] = useAtom(BusAtom.headSignAtom)
     const [busStops, setBusStops] = useAtom(BusAtom.busStopsAtom)
-    const map = useMap()
 
     useEffect(()=>{
         if (bus) {
-            const fetchData = async (bus:string) => {
-                const res = await fetch(`/api/getBusStops?bus=${bus}&type=stops&city=${city}`).then(res=>res)
-                const data = await res.json()  as BusStops[]
-                setBusStops([...data])
-            }
-            fetchData(bus).catch(err=>alert(err))
+            getBusStops(bus, city).then(data=>setBusStops([...data])).catch(err=>alert(err))
         }
     }, [bus])
 

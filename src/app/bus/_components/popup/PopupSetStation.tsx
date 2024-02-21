@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react"
 import { type BusStopSearchResult } from "~/type/bus"
 import { ScrollArea } from "~/components/ui/scroll-area"
 import { useSearchParams } from "next/navigation"
+import { searchStop } from "~/server_action/searchStop"
 
 export default function PopupSetStation() {
 
@@ -18,15 +19,13 @@ export default function PopupSetStation() {
     const inputRef = useRef<HTMLInputElement>(null)
     const city = useSearchParams().get("city")
     const handleSearch = async () => {
-        if (inputRef.current?.value) {
-            const res = await fetch(`/api/searchStop?city=${city}&q=${inputRef.current.value}`).then(res=>res)
-            const data = await res.json() as BusStopSearchResult[]
-            setResult([...data])
+        if (inputRef.current?.value && city) {
+            searchStop(inputRef.current.value, city).then(data=>setResult([...data])).catch(err=>alert(err))
         }
     }
 
     const handleEnter = async (e: React.KeyboardEvent) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && inputRef.current?.value && city) {
             await handleSearch()
         }
     }
