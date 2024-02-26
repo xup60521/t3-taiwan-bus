@@ -34,7 +34,7 @@ const ShowPolyLines = ({city}:{city:string}) => {
     const [bus] = useAtom(BusAtom.busAtom)
     const [direction] = useAtom(BusAtom.directionAtom)
     const [headSign] = useAtom(BusAtom.headSignAtom)
-    const [busShape, setBusShape] = useState<BusGeo[] | null>(null)
+    const [busShape, setBusShape] = useAtom(BusAtom.busShapeAtom)
     const map = useMap()
 
     useEffect(()=>{
