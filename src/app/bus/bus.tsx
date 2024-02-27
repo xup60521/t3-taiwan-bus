@@ -13,6 +13,7 @@ import PopupSection from "~/app/bus/_components/popup/PopupSetStation"
 import NoteCard from "./_components/card/noteCard"
 import { getAllStop } from "~/server_action/getAllStop"
 import { useSearchParams } from "next/navigation"
+import OverlayCard from "./_components/card/overlayCard"
 
 const Map = dynamic(()=>import("~/app/bus/_components/map/map"), {ssr: false})
 
@@ -42,7 +43,8 @@ export default function Bus() {
                 {page==="bus" && <BusCard />}
                 {page==="station" && <StationCard />}
                 {page==="note" && <NoteCard />}
-                <PageController />
+                {page==="overlay" && <OverlayCard />}
+                <PageController />  
                 <PopupSection />
             </main>
         </>

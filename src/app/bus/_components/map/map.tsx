@@ -1,11 +1,9 @@
 "use client"
 import { MapContainer, TileLayer, Polyline, Tooltip, useMap } from 'react-leaflet'
 import "leaflet/dist/leaflet.css"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import * as BusAtom from "~/state/bus"
 import { useAtom } from "jotai"
-import type { BusGeo, BusStops } from '~/type/bus'
-import { Icon } from 'leaflet'
 import ShowMarker from './marker'
 import { getBusStops } from '~/server_action/getBusStops'
 import { getBusShape } from '~/server_action/getBusShape'
@@ -98,11 +96,6 @@ const ShowStops = ({city}:{city:string}) => {
     if (busStops && bus && direction) {
         const thisDirection = busStops.find(item=>item.Direction === Number(direction))
         return thisDirection?.Stops.map((item)=>{
-            const icon = new Icon({
-                iconUrl: "pin.png",
-                iconSize: [16, 48],
-                
-            })   
             return <ShowMarker item={item} key={`${item.StopSequence} ${item.StopName.Zh_tw}`} />
         })
     }
