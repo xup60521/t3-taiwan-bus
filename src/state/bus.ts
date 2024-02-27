@@ -6,7 +6,7 @@ export const busAtom = atom("")
 export const directionAtom = atom("")
 export const headSignAtom = atom("")
 export const busStopsAtom = atom<BusStops[] | null>(null)
-export const busShapeAtom = atom<BusGeo[] | null>(null)
+export const busShapeAtom = atom<BusGeo[]>([])
 export const toggleStop = atom<{
     stopName?: string,
     id: number;
