@@ -56,6 +56,7 @@ const FlyToCurrent = () => {
       })
       
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
   return <>
   </>
@@ -181,13 +182,16 @@ const ShowOverlayPolylines = () => {
               .map((item) => Number(item)),
           ) as [number, number][];
         const headSign = `${item.RouteName.Zh_tw}（${item.Stops[0].StopName.Zh_tw} - ${item.Stops[item.Stops.length - 1].StopName.Zh_tw}）`;
-        const color = `#${Math.floor((Math.abs(Math.sin(seedrandom(item.RouteName.Zh_tw)()) * 16777215))).toString(16)}`
+        const color_r = Math.floor(256 * seedrandom(item.RouteName.Zh_tw + "r")()).toString(16).padStart(2, "0")
+        const color_g = Math.floor(256 * seedrandom(item.RouteName.Zh_tw + "g")()).toString(16).padStart(2, "0")
+        const color_b = Math.floor(256 * seedrandom(item.RouteName.Zh_tw + "b")()).toString(16).padStart(2, "0")
+        const color = `#${color_r}${color_g}${color_b}`
         return (
           <Polyline
             key={`polyline ${item.RouteName.Zh_tw} ${item.Direction}`}
             positions={positionArr}
             pathOptions={{
-              opacity: 0.6,
+              opacity: 0.7,
               color,
               weight: 8,
             }}
@@ -241,12 +245,12 @@ const ShowStops = ({ city }: { city: string }) => {
 
 const ShowOverlayStops = () => {
   const [busOverlay] = useAtom(BusAtom.overlayAtom);
-  const [busStops] = useAtom(BusAtom.busStopsAtom);
-  const busStopFlat = busStops?.map(d => d.Stops).flat().map(d => d.StopName.Zh_tw)
+  // const [busStops] = useAtom(BusAtom.busStopsAtom);
+  // const busStopFlat = busStops?.map(d => d.Stops).flat().map(d => d.StopName.Zh_tw)
   const ref = useRef<L.Marker>(null)
   const flatall = busOverlay.map(d => d.Stops).flat()
   const flatName = flatall.map(d => d.StopName.Zh_tw).filter((item, index, arr) => arr.indexOf(item) === index)
-  const filteredOverlap = flatName.filter(name => !busStopFlat?.find(item => item === name))
+  // const filteredOverlap = flatName.filter(name => !busStopFlat?.find(item => item === name))
   const icon = new Icon({
     iconUrl: "pin3.png",
     iconSize: [16, 16],
@@ -255,7 +259,7 @@ const ShowOverlayStops = () => {
 
 
   return <>
-    {filteredOverlap.map(name => {
+    {flatName.map(name => {
       const item = flatall.find(d => d.StopName.Zh_tw === name)
       return <>
         {!!item && <Marker ref={ref} riseOffset={-12} icon={icon} key={`${item.StopSequence}`} position={[item.StopPosition.PositionLat, item.StopPosition.PositionLon]} >
