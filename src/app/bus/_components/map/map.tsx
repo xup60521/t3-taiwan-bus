@@ -19,10 +19,7 @@ import { Icon } from "leaflet";
 import seedrandom from "seedrandom"
 
 export default function Map() {
-  const position = useMemo(
-    () => ({ lat: 24.137396608878987, lng: 120.68692065044608 }),
-    [],
-  );
+  const position = useMemo(() => ({ lat: 24.137396608878987, lng: 120.68692065044608 }), [])
   const [city] = useAtom(BusAtom.cityAtom);
 
   return (
@@ -37,12 +34,31 @@ export default function Map() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         className="absolute right-0"
       />
+      <FlyToCurrent />
       <ShowPolyLines city={city} />
       <ShowOverlayPolylines />
       <ShowStops city={city} />
       <ShowOverlayStops />
     </MapContainer>
   );
+}
+
+const FlyToCurrent = () => {
+  const map = useMap()
+
+  useEffect(()=>{
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(position => {
+        map.flyTo({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        })
+      })
+      
+    }
+  },[])
+  return <>
+  </>
 }
 
 const ShowPolyLines = ({ city }: { city: string }) => {
