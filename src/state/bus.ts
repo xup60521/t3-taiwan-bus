@@ -17,3 +17,9 @@ export const stationAtom = atom("")
 export const pageAtom = atom("bus")
 export const cityAtom = atom("")
 export const noteAtom = atomWithStorage("note", "")
+
+type overlayType = BusGeo & {
+    Stops: BusStops["Stops"]
+}
+
+export const overlayAtom = atom<overlayType[]>([])

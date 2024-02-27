@@ -14,7 +14,7 @@ export default function ShowMarker({item}: {item: Unpacked<BusStops["Stops"]>}) 
     const [toggleStop] = useAtom(BusAtom.toggleStop)
     const [station] = useAtom(BusAtom.stationAtom)
     const icon = new Icon({
-        iconUrl: "pin.png",
+        iconUrl: "pin_inv.png",
         iconSize: [16, 48],
         
     })   
@@ -28,6 +28,7 @@ export default function ShowMarker({item}: {item: Unpacked<BusStops["Stops"]>}) 
         if (toggleStop?.stopName === item.StopName.Zh_tw) {
             ref.current?.openPopup()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[toggleStop])
     
     return <Marker ref={ref} riseOffset={-12} icon={station === item.StopName.Zh_tw ? icon_blue : icon} key={`${item.StopSequence}`} position={[item.StopPosition.PositionLat, item.StopPosition.PositionLon]} >

@@ -14,6 +14,7 @@ import NoteCard from "./_components/card/noteCard"
 import { getAllStop } from "~/server_action/getAllStop"
 import { useSearchParams } from "next/navigation"
 import OverlayCard from "./_components/card/overlayCard"
+import { Toaster } from "~/components/ui/toaster"
 
 const Map = dynamic(()=>import("~/app/bus/_components/map/map"), {ssr: false})
 
@@ -26,6 +27,7 @@ export default function Bus() {
 
     useEffect(()=>{
         getAllStop(city ?? undefined).then(data=>setinitBusList(data)).catch(err=>alert(err))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     if (!initBusList) {
@@ -46,6 +48,7 @@ export default function Bus() {
                 {page==="overlay" && <OverlayCard />}
                 <PageController />  
                 <PopupSection />
+                <Toaster />
             </main>
         </>
     )
