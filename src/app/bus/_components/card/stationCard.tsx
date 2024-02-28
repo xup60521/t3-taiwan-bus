@@ -11,6 +11,7 @@ import type { BusRoutePassBy } from "~/type/bus"
 import type { SetAtom } from "~/type/setAtom"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
 import { FiMenu } from "react-icons/fi"
+import { useOverlay } from "~/hooks/useOverlay"
 
 export default function StationCard() {
 
@@ -72,9 +73,18 @@ const BusList = ({
     bus: string,
     direction: string
 }) => {
+
+    const [busOverlay] = useAtom(BusAtom.overlayAtom)
+
+const add_remove_overlay = useOverlay()
+
+
 return  (  
     <>
         {list?.sort((a,b)=>Number(RNN(a.RouteName.Zh_tw)) - Number(RNN(b.RouteName.Zh_tw))).map(item=>{
+            const isOverlayed = !!busOverlay.find(
+                (d) => d.RouteName.Zh_tw === item.RouteName.Zh_tw && item.Direction === Number(direction),
+              );
             return (
             <div key={`${item.Direction} ${item.RouteName.Zh_tw} ${item.StopSequence}`} className="w-full flex justify-between">
                 <div className="h-full flex items-center gap-2">
@@ -105,6 +115,9 @@ return  (
                             }}>
                                 <span>查看路線</span>
                             </DropdownMenuItem>
+                            {(bus===item.RouteName.Zh_tw && Number(direction) === item.Direction ) && <DropdownMenuItem onClick={add_remove_overlay}>
+                                <span>{isOverlayed ? "移除疊加路線" : "新增疊加路線"}</span>
+                            </DropdownMenuItem>}
                         </DropdownMenuContent>
                     </DropdownMenu>
             </div>

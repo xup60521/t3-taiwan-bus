@@ -17,7 +17,7 @@ import {
 import type { SetAtom } from "~/type/setAtom";
 import { useSearchParams } from "next/navigation";
 import { FaCircleInfo } from "react-icons/fa6";
-import { toast } from "~/components/ui/use-toast";
+import { useOverlay } from "~/hooks/useOverlay";
 
 export default function BusCard() {
   const [direction, setDirection] = useAtom(BusAtom.directionAtom);
@@ -29,8 +29,8 @@ export default function BusCard() {
   const [station, setStation] = useAtom(BusAtom.stationAtom);
   const [seconds, setSeconds] = useState(14);
   const [busStops] = useAtom(BusAtom.busStopsAtom);
-  const [busShape] = useAtom(BusAtom.busShapeAtom);
-  const [busOverlay, setBusOverlay] = useAtom(BusAtom.overlayAtom);
+  const [busOverlay] = useAtom(BusAtom.overlayAtom);
+  const add_remove_overlay = useOverlay()
   const busEst = api.bus.getBusEst.useQuery(
     {
       bus,
@@ -58,55 +58,7 @@ export default function BusCard() {
   const isOverlayed = !!busOverlay.find(
     (d) => d.RouteName.Zh_tw === bus && d.Direction === Number(direction),
   );
-  const add_remove_overlay = () => {
-    const thisStops = busStops?.find((d) => d.Direction === Number(direction));
-    const thisShape = busShape.find((d) => d.Direction === Number(direction));
-    // add
-    if (
-      !busOverlay.find(
-        (d) => d.RouteName.Zh_tw === bus && d.Direction === Number(direction),
-      ) &&
-      thisStops &&
-      thisShape
-    ) {
-      setBusOverlay((prev) => {
-        return [
-          ...prev,
-          {
-            ...thisShape,
-            Stops: thisStops.Stops,
-          },
-        ];
-      });
-      toast({
-        title:"新增成功",
-        description: `${bus}（${thisStops.Stops[0].StopName.Zh_tw} - ${thisStops.Stops[thisStops.Stops.length-1].StopName.Zh_tw}）`,
-        className: "bg-lime-200"
-      })
-    }
-    //remove
-    if (
-      busOverlay.find(
-        (d) => d.RouteName.Zh_tw === bus && d.Direction === Number(direction),
-      )
-    ) {
-      setBusOverlay((prev) => {
-        const filtered = prev.filter(
-          (item) =>
-            item.Direction !== Number(direction) ||
-            item.RouteName.Zh_tw !== bus,
-        );
-        return [...filtered];
-      });
-      const thisStops = busStops?.find((d) => d.Direction === Number(direction));
-      const sign = `${bus}（${thisStops?.Stops[0].StopName.Zh_tw} - ${thisStops?.Stops[thisStops?.Stops.length-1].StopName.Zh_tw}）`
-      toast({
-        title: "刪除成功",
-        description: sign,
-        className: "bg-red-100"
-      });
-    }
-  };
+  
 
   useEffect(() => {
     const intervalId2 = setInterval(() => {
