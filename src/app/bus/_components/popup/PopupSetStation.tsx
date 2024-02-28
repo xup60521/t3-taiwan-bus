@@ -49,7 +49,7 @@ export default function PopupSetStation() {
         <div className="flex w-full gap-2">
           <Input onKeyDown={handleEnter} ref={inputRef} className="flex-grow" />
           <Button onClick={handleSearch} className="bg-slate-700">
-            {loading ? <FaSpinner /> :<FaSearch />}
+            {loading ? <FaSpinner className="animate-spin" /> :<FaSearch />}
           </Button>
         </div>
         <ScrollArea className="w-full">
