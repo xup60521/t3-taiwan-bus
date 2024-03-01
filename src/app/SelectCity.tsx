@@ -17,7 +17,7 @@ export default function SelectCity({
   return (
     <section
       id="start"
-      className="flex h-screen w-screen flex-col items-center gap-4 justify-center"
+      className="flex h-screen w-screen flex-col items-center gap-4 justify-center pb-[10vh]"
     >
       <h2 className="text-3xl font-mono">Select a city</h2>
       <div className="w-full flex md:flex-row flex-col items-center gap-2 justify-center">
