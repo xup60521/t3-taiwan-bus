@@ -1,5 +1,5 @@
 "use client";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import * as BusAtom from "~/state/bus";
 import Popup from "reactjs-popup";
 import { Input } from "~/components/ui/input";
@@ -15,7 +15,7 @@ export default function PopupSetStation() {
   const [open, setOpen] = useAtom(BusAtom.openStationPopupAtom);
   const [result, setResult] = useState<BusStopSearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [, setStation] = useAtom(BusAtom.stationAtom);
+  const setStation = useSetAtom(BusAtom.stationAtom)
   const inputRef = useRef<HTMLInputElement>(null);
   const city = useSearchParams().get("city");
   const handleSearch = async () => {
