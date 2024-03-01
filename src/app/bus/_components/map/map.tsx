@@ -11,16 +11,71 @@ import {
 import "leaflet/dist/leaflet.css";
 import { useEffect, useMemo, useRef } from "react";
 import * as BusAtom from "~/state/bus";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import ShowMarker from "./marker";
 import { getBusStops } from "~/server_action/getBusStops";
 import { getBusShape } from "~/server_action/getBusShape";
 import { Icon } from "leaflet";
-import seedrandom from "seedrandom"
+import seedrandom from "seedrandom";
 
 export default function Map() {
-  const position = useMemo(() => ({ lat: 24.137396608878987, lng: 120.68692065044608 }), [])
-  const [city] = useAtom(BusAtom.cityAtom);
+  const position = useMemo(
+    () => ({ lat: 24.137396608878987, lng: 120.68692065044608 }), // [緯度, 經度]
+    [],
+  );
+  const city = useAtomValue(BusAtom.cityAtom);
+  const bus = useAtomValue(BusAtom.busAtom);
+  const setBusShape = useSetAtom(BusAtom.busShapeAtom);
+  const setBusStops = useSetAtom(BusAtom.busStopsAtom);
+
+  useEffect(() => {
+    if (bus) {
+      getBusStops(bus, city)
+        .then((stops) => {
+          setBusStops([...stops]);
+          getBusShape(bus, city)
+            .then((shapes) => {
+              const withDirectionData = shapes
+                .map((item, index, arr) => {
+                  const d0 = stops.find((d) => d.Direction === 0)?.Stops.sort((a,b)=>a.StopSequence - b.StopSequence)[0]
+                    .StopPosition;
+                  const d1 = stops.find((d) => d.Direction === 1)?.Stops.sort((a,b)=>a.StopSequence - b.StopSequence)[0]
+                    .StopPosition;
+                  if (item.Direction) {
+                    return item;
+                  } else if (arr.length === 2 && d0 && d1) {
+                    const regex = /[A-Z()]/g;
+                    const position = item.Geometry.replace(regex, "")
+                      .split(",")
+                      .map((f) =>
+                        f
+                          .split(" ")
+                          .reverse()
+                          .map((item) => Number(item)),
+                      )[0] as [number, number];
+                    const length_to_d0 = (position[0] - d0.PositionLat)**2 + (position[1] - d0.PositionLon)**2
+                    const length_to_d1 = (position[0] - d1.PositionLat)**2 + (position[1] - d1.PositionLon)**2
+                    if (length_to_d0 >= length_to_d1) {
+                      item.Direction = 1
+                    } else {
+                      item.Direction = 0
+                    }
+
+                    return item;
+                  } else {
+                    item.Direction = index;
+                    return item;
+                  }
+                })
+                .sort((a, b) => a.Direction - b.Direction);
+              setBusShape([...withDirectionData]);
+            })
+            .catch((shapErr) => alert(shapErr));
+        })
+        .catch((StopsErr) => alert(StopsErr));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bus]);
 
   return (
     <MapContainer
@@ -35,38 +90,36 @@ export default function Map() {
         className="absolute right-0"
       />
       <FlyToCurrent />
-      <ShowPolyLines city={city} />
+      <ShowPolyLines />
       <ShowOverlayPolylines />
-      <ShowStops city={city} />
+      <ShowStops />
       <ShowOverlayStops />
     </MapContainer>
   );
 }
 
 const FlyToCurrent = () => {
-  const map = useMap()
+  const map = useMap();
 
-  useEffect(()=>{
+  useEffect(() => {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(position => {
+      navigator.geolocation.getCurrentPosition((position) => {
         map.flyTo({
           lat: position.coords.latitude,
-          lng: position.coords.longitude
-        })
-      })
-      
+          lng: position.coords.longitude,
+        });
+      });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
-  return <>
-  </>
-}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <></>;
+};
 
-const ShowPolyLines = ({ city }: { city: string }) => {
-  const [bus] = useAtom(BusAtom.busAtom);
-  const [direction] = useAtom(BusAtom.directionAtom);
-  const [busStops] = useAtom(BusAtom.busStopsAtom);
-  const [busShape, setBusShape] = useAtom(BusAtom.busShapeAtom);
+const ShowPolyLines = () => {
+  const bus = useAtomValue(BusAtom.busAtom);
+  const direction = useAtomValue(BusAtom.directionAtom);
+  const busStops = useAtomValue(BusAtom.busStopsAtom);
+  const busShape = useAtomValue(BusAtom.busShapeAtom);
   const map = useMap();
 
   useEffect(() => {
@@ -91,29 +144,8 @@ const ShowPolyLines = ({ city }: { city: string }) => {
         map.flyTo(center, 13);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [busShape]);
-
-  useEffect(() => {
-    if (bus) {
-      getBusShape(bus, city)
-        .then((data) => {
-          const withDirectionData = data
-            .map((item, index) => {
-              if (item.Direction) {
-                return item;
-              } else {
-                item.Direction = index;
-                return item;
-              }
-            })
-            .sort((a, b) => a.Direction - b.Direction);
-          setBusShape([...withDirectionData]);
-        })
-        .catch((err) => alert(err));
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bus]);
+  }, [busShape]);
 
   if (!busShape || bus === "" || direction === "") {
     return "";
@@ -135,7 +167,7 @@ const ShowPolyLines = ({ city }: { city: string }) => {
       (item) =>
         item.Direction === Number(direction) && item.RouteName.Zh_tw === bus,
     )?.Stops;
-    
+
     return (
       <>
         <Polyline
@@ -182,10 +214,22 @@ const ShowOverlayPolylines = () => {
               .map((item) => Number(item)),
           ) as [number, number][];
         const headSign = `${item.RouteName.Zh_tw}（${item.Stops[0].StopName.Zh_tw} - ${item.Stops[item.Stops.length - 1].StopName.Zh_tw}）`;
-        const color_r = Math.floor(256 * seedrandom(item.RouteName.Zh_tw + "r")()).toString(16).padStart(2, "0")
-        const color_g = Math.floor(256 * seedrandom(item.RouteName.Zh_tw + "g")()).toString(16).padStart(2, "0")
-        const color_b = Math.floor(256 * seedrandom(item.RouteName.Zh_tw + "b")()).toString(16).padStart(2, "0")
-        const color = `#${color_r}${color_g}${color_b}`
+        const color_r = Math.floor(
+          256 * seedrandom(item.RouteName.Zh_tw + "r")(),
+        )
+          .toString(16)
+          .padStart(2, "0");
+        const color_g = Math.floor(
+          256 * seedrandom(item.RouteName.Zh_tw + "g")(),
+        )
+          .toString(16)
+          .padStart(2, "0");
+        const color_b = Math.floor(
+          256 * seedrandom(item.RouteName.Zh_tw + "b")(),
+        )
+          .toString(16)
+          .padStart(2, "0");
+        const color = `#${color_r}${color_g}${color_b}`;
         return (
           <Polyline
             key={`polyline ${item.RouteName.Zh_tw} ${item.Direction}`}
@@ -204,19 +248,10 @@ const ShowOverlayPolylines = () => {
   );
 };
 
-const ShowStops = ({ city }: { city: string }) => {
+const ShowStops = () => {
   const [bus] = useAtom(BusAtom.busAtom);
   const [direction] = useAtom(BusAtom.directionAtom);
-  const [busStops, setBusStops] = useAtom(BusAtom.busStopsAtom);
-
-  useEffect(() => {
-    if (bus) {
-      getBusStops(bus, city)
-        .then((data) => setBusStops([...data]))
-        .catch((err) => alert(err));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bus]);
+  const busStops = useAtomValue(BusAtom.busStopsAtom);
 
   if (!bus || direction === "") {
     return null;
@@ -247,35 +282,49 @@ const ShowOverlayStops = () => {
   const [busOverlay] = useAtom(BusAtom.overlayAtom);
   // const [busStops] = useAtom(BusAtom.busStopsAtom);
   // const busStopFlat = busStops?.map(d => d.Stops).flat().map(d => d.StopName.Zh_tw)
-  const ref = useRef<L.Marker>(null)
-  const flatall = busOverlay.map(d => d.Stops).flat()
-  const flatName = flatall.map(d => d.StopName.Zh_tw).filter((item, index, arr) => arr.indexOf(item) === index)
+  const ref = useRef<L.Marker>(null);
+  const flatall = busOverlay.map((d) => d.Stops).flat();
+  const flatName = flatall
+    .map((d) => d.StopName.Zh_tw)
+    .filter((item, index, arr) => arr.indexOf(item) === index);
   // const filteredOverlap = flatName.filter(name => !busStopFlat?.find(item => item === name))
   const icon = new Icon({
     iconUrl: "pin3.png",
     iconSize: [16, 16],
-    
-})   
+  });
 
-
-  return <>
-    {flatName.map(name => {
-      const item = flatall.find(d => d.StopName.Zh_tw === name)
-      return <>
-        {!!item && <Marker ref={ref} riseOffset={-12} icon={icon} key={`${item.StopSequence}`} position={[item.StopPosition.PositionLat, item.StopPosition.PositionLon]} >
-                <Popup >
-                    <div>
-                        <p>{`${item.StopName.Zh_tw}`}</p>
-                    </div>
+  return (
+    <>
+      {flatName.map((name) => {
+        const item = flatall.find((d) => d.StopName.Zh_tw === name);
+        return (
+          <>
+            {!!item && (
+              <Marker
+                ref={ref}
+                riseOffset={-12}
+                icon={icon}
+                key={`${item.StopSequence}`}
+                position={[
+                  item.StopPosition.PositionLat,
+                  item.StopPosition.PositionLon,
+                ]}
+              >
+                <Popup>
+                  <div>
+                    <p>{`${item.StopName.Zh_tw}`}</p>
+                  </div>
                 </Popup>
-                <Tooltip direction='bottom'>
-                    <div>
-                        <p>{`${item.StopName.Zh_tw}`}</p>
-                    </div>
+                <Tooltip direction="bottom">
+                  <div>
+                    <p>{`${item.StopName.Zh_tw}`}</p>
+                  </div>
                 </Tooltip>
-            </Marker>}
-      </>
-    })}
-  </>;
+              </Marker>
+            )}
+          </>
+        );
+      })}
+    </>
+  );
 };
-

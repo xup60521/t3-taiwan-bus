@@ -50,7 +50,7 @@ export default function Home() {
           }
         >
           <h1 className="text-6xl font-black">
-            Taking the bus without all the pain you used to have.
+            Taking the bus without all the pain.
           </h1>
           <p className="mx-16">
             A web app with various built in function that optimizes user

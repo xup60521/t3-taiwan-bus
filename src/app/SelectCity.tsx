@@ -17,10 +17,10 @@ export default function SelectCity({
   return (
     <section
       id="start"
-      className="flex h-screen w-screen flex-col items-center gap-4 justify-center pb-[10vh]"
+      className="flex h-screen w-screen flex-col items-center justify-center gap-4 pb-[10vh]"
     >
-      <h2 className="text-3xl font-mono">Select a city</h2>
-      <div className="w-full flex md:flex-row flex-col items-center gap-2 justify-center">
+      <h2 className="font-mono text-3xl">Select a city</h2>
+      <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
         <ReactSelect
           placeholder="選擇城市..."
           className="w-48 text-black"
@@ -33,13 +33,22 @@ export default function SelectCity({
           }
           if (item.value === value) {
             return (
-              <Link
-                className="rounded-lg bg-sky-500 p-2 px-6 font-bold text-white transition-all hover:bg-sky-400"
-                key={item.value}
-                href={`/bus?city=${item.value}`}
-              >
-                進入
-              </Link>
+              <>
+                <Link
+                  className="rounded-lg bg-sky-500 p-2 px-6 font-bold text-white transition-all hover:bg-sky-400"
+                  key={item.value}
+                  href={`/bus?city=${item.value}`}
+                >
+                  進入
+                </Link>
+                <Link
+                  key={`routemap ${item.value}`}
+                  className="rounded-lg bg-sky-500 p-2 px-6 font-bold text-white transition-all hover:bg-sky-400"
+                  href={`/route_map?city=${item.value}`}
+                >
+                  To Route Map
+                </Link>
+              </>
             );
           }
         })}

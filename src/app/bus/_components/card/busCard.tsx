@@ -30,7 +30,7 @@ export default function BusCard() {
   const [seconds, setSeconds] = useState(14);
   const [busStops] = useAtom(BusAtom.busStopsAtom);
   const [busOverlay] = useAtom(BusAtom.overlayAtom);
-  const add_remove_overlay = useOverlay()
+  const add_remove_overlay = useOverlay();
   const busEst = api.bus.getBusEst.useQuery(
     {
       bus,
@@ -58,7 +58,6 @@ export default function BusCard() {
   const isOverlayed = !!busOverlay.find(
     (d) => d.RouteName.Zh_tw === bus && d.Direction === Number(direction),
   );
-  
 
   useEffect(() => {
     const intervalId2 = setInterval(() => {

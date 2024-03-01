@@ -15,6 +15,7 @@ import { getAllStop } from "~/server_action/getAllStop"
 import { useSearchParams } from "next/navigation"
 import OverlayCard from "./_components/card/overlayCard"
 import { Toaster } from "~/components/ui/toaster"
+import { DevTools } from 'jotai-devtools'
 
 const Map = dynamic(()=>import("~/app/bus/_components/map/map"), {ssr: false})
 
@@ -39,6 +40,7 @@ export default function Bus() {
             <Suspense>
                 <SyncSearchParams />
             </Suspense>
+            <DevTools />
             <main className={`${openPopup ? "blur" : ""} transition-all box-border w-screen h-screen bg-slate-800 text-white overflow-hidden flex-col flex`}>
                 <DrawerSection initBusList={initBusList} /> 
                 <Map />
