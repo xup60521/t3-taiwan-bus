@@ -49,7 +49,7 @@ export default function Home() {
             "flex w-[60rem] max-w-[100vw] flex-col  items-center gap-8 text-center font-mono"
           }
         >
-          <h1 className="text-6xl font-black">
+          <h1 className="text-6xl font-black px-4">
             Taking the bus without all the pain.
           </h1>
           <p className="mx-16">
