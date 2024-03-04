@@ -40,7 +40,7 @@ export default function Bus() {
             <Suspense>
                 <SyncSearchParams />
             </Suspense>
-            <DevTools />
+            {/* <DevTools /> */}
             <main className={`${openPopup ? "blur" : ""} transition-all box-border w-screen h-screen bg-slate-800 text-white overflow-hidden flex-col flex`}>
                 <DrawerSection initBusList={initBusList} /> 
                 <Map />

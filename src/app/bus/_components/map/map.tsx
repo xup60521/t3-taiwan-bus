@@ -7,6 +7,7 @@ import {
   useMap,
   Marker,
   Popup,
+  LayersControl,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useMemo, useRef } from "react";
@@ -15,7 +16,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import ShowMarker from "./marker";
 import { getBusStops } from "~/server_action/getBusStops";
 import { getBusShape } from "~/server_action/getBusShape";
-import { Icon } from "leaflet";
+import L, { Icon } from "leaflet";
 import seedrandom from "seedrandom";
 
 export default function Map() {
@@ -27,6 +28,16 @@ export default function Map() {
   const bus = useAtomValue(BusAtom.busAtom);
   const setBusShape = useSetAtom(BusAtom.busShapeAtom);
   const setBusStops = useSetAtom(BusAtom.busStopsAtom);
+  const baselayers = [
+    {name: 'OpenStreetMap.Mapnik', value: ('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')},
+    {name: 'OpenStreetMap.DE', value: ('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}}.png')},
+    {name: 'OpenStreetMap.CH', value: ('https://tile.osm.ch/switzerland/{z}/{x}/{y}.png')},
+    {name: 'OpenStreetMap.France', value:  ('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.}png')},
+    {name: 'OpenStreetMap.HOT', value: ('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png')},
+    {name: 'OpenStreetMap.BZH', value: ('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png')},
+    {name: 'OpenTopoMap', value: ('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png')}
+  ];
+  
 
   useEffect(() => {
     if (bus) {
@@ -84,9 +95,10 @@ export default function Map() {
       scrollWheelZoom={true}
       className="z-0 h-full w-full"
     >
+      {/* https://leaflet-extras.github.io/leaflet-providers/preview/ */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
         className="absolute right-0"
       />
       <FlyToCurrent />
@@ -94,6 +106,13 @@ export default function Map() {
       <ShowOverlayPolylines />
       <ShowStops />
       <ShowOverlayStops />
+      <LayersControl position="topright">
+        {baselayers.map(d => {
+          return <LayersControl.Overlay name={d.name} key={d.name}>
+            <TileLayer url={d.value} />
+          </LayersControl.Overlay>
+        })}
+      </LayersControl>
     </MapContainer>
   );
 }
@@ -110,6 +129,19 @@ const FlyToCurrent = () => {
         });
       });
     }
+    // const baselayers = {
+    //   'OpenStreetMap.Mapnik': ('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+    //   'OpenStreetMap.DE': ('https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png'),
+    //   'OpenStreetMap.CH': ('https://tile.osm.ch/switzerland/{z}/{x}/{y}.png'),
+    //   'OpenStreetMap.France':  ('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png'),
+    //   'OpenStreetMap.HOT': ('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'),
+    //   'OpenStreetMap.BZH': ('https://tile.openstreetmap.bzh/br/{z}/{x}/{y}.png'),
+    //   'OpenTopoMap': ('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png')
+    // };
+    // const overlays = {};
+    // L.control.layers(baselayers, overlays).addTo(map);
+    // baselayers['OpenStreetMap.Mapnik'].addTo(map);
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <></>;

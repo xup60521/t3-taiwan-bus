@@ -10,6 +10,7 @@ import {useAtom} from "jotai"
 import * as BusAtom from "~/state/bus";
 
 export default function ShowMarker({item}: {item: Unpacked<BusStops["Stops"]>}) {
+    
     const ref = useRef<L.Marker>(null)
     const [toggleStop] = useAtom(BusAtom.toggleStop)
     const [station] = useAtom(BusAtom.stationAtom)
