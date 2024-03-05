@@ -16,7 +16,8 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import ShowMarker from "./marker";
 import { getBusStops } from "~/server_action/getBusStops";
 import { getBusShape } from "~/server_action/getBusShape";
-import L, { Icon } from "leaflet";
+import { Icon } from "leaflet";
+import type L from "leaflet";
 import seedrandom from "seedrandom";
 
 export default function Map() {

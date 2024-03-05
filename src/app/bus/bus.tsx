@@ -16,8 +16,9 @@ import { useSearchParams } from "next/navigation"
 import OverlayCard from "./_components/card/overlayCard"
 import { Toaster } from "~/components/ui/toaster"
 import { DevTools } from 'jotai-devtools'
+// import Map from './_components/map/map'
 
-const Map = dynamic(()=>import("~/app/bus/_components/map/map"), {ssr: false})
+const Map = dynamic(()=>import("~/app/bus/_components/map/map"))
 
 export default function Bus() {
 
