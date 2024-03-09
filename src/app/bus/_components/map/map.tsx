@@ -19,6 +19,7 @@ import { getBusShape } from "~/server_action/getBusShape";
 import { Icon } from "leaflet";
 import type L from "leaflet";
 import seedrandom from "seedrandom";
+import ShowPolyline from "./polyline";
 
 export default function Map() {
   const position = useMemo(
@@ -202,22 +203,23 @@ const ShowPolyLines = () => {
     )?.Stops;
 
     return (
-      <>
-        <Polyline
+      <ShowPolyline
           positions={positionArr}
+          routeName={bus}
+          direction={direction}
           pathOptions={{
             opacity: 0.6,
             color: "#809fff",
             weight: 8,
           }}
-        >
-          <Tooltip sticky>
-            {thisStops
-              ? `${bus}（${thisStops[0].StopName.Zh_tw} - ${thisStops[thisStops.length - 1].StopName.Zh_tw}）`
-              : bus}
-          </Tooltip>
-        </Polyline>
-      </>
+          headSign={
+            thisStops
+              ? `${bus}（${thisStops[0].StopName.Zh_tw} - ${
+                  thisStops[thisStops.length - 1].StopName.Zh_tw
+                }）`
+              : bus
+          }
+        />
     );
   }
   return "";
@@ -264,7 +266,9 @@ const ShowOverlayPolylines = () => {
           .padStart(2, "0");
         const color = `#${color_r}${color_g}${color_b}`;
         return (
-          <Polyline
+          <ShowPolyline
+            routeName={item.RouteName.Zh_tw}
+            direction={`${item.Direction}`}
             key={`polyline ${item.RouteName.Zh_tw} ${item.Direction}`}
             positions={positionArr}
             pathOptions={{
@@ -272,9 +276,8 @@ const ShowOverlayPolylines = () => {
               color,
               weight: 8,
             }}
-          >
-            <Tooltip sticky>{headSign}</Tooltip>
-          </Polyline>
+            headSign={headSign}
+          />
         );
       })}
     </>

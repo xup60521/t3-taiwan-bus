@@ -1,5 +1,5 @@
 "use client";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { FaTrash } from "react-icons/fa6";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import * as BusAtom from "~/state/bus";
@@ -53,6 +53,7 @@ const OverlayList: React.FC = () => {
       className: "bg-red-100"
     });
   };
+  const setTogglePolyline = useSetAtom(BusAtom.togglePolylineAtom);
 
   return (
     <>
@@ -65,7 +66,24 @@ const OverlayList: React.FC = () => {
             key={`overlay ${item.RouteName.Zh_tw} ${item.Direction}`}
             className="flex w-full items-center justify-between"
           >
-            <span className="w-[calc(100vw-6rem)] flex-shrink truncate p-2 md:w-[calc(25rem-6rem)]">{headSign}</span>
+            <button
+              onClick={() => {
+                setTogglePolyline((prev) => ({
+                  routeName: item.RouteName.Zh_tw,
+                  direction: `${item.Direction}`,
+                  id: prev.id + 1,
+                }));
+              }}
+              className="relative group text-black p-1"
+            >
+              <span>{headSign}</span>
+              <span
+                className={`absolute -bottom-1 left-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all`}
+              ></span>
+              <span
+                className={`absolute -bottom-1 right-1/2 w-0 h-0.5 bg-red-400 group-hover:w-1/2 group-hover:transition-all`}
+              ></span>
+            </button>
             <div className="box-border flex w-max items-center gap-2">
               <button
                 onClick={() => {

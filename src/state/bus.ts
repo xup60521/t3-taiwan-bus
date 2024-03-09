@@ -23,3 +23,8 @@ type overlayType = BusGeo & {
 }
 
 export const overlayAtom = atom<overlayType[]>([])
+export const togglePolylineAtom = atom<{
+    routeName?: string;
+    direction?: string;
+    id: number;
+  }>({ routeName: undefined, id: 0, direction: undefined });

@@ -27,19 +27,12 @@ export type BusEst = {
     Direction:     number;
     EstimateTime?: number;
     StopSequence:  number;
-    StopStatus:    StopStatus;
+    StopStatus:    string;
     NextBusTime?:   string;
     SrcUpdateTime: string;
     UpdateTime:    string;
 }
 
-enum StopStatus {
-    0,
-    1,
-    2,
-    3,
-    4
-}
 
 //車輛狀態備註 : [0:'正常',1:'尚未發車',2:'交管不停靠',3:'末班車已過',4:'今日未營運']
 
@@ -93,8 +86,12 @@ export type BusRoutePassBy = {
     UpdateTime:    string;
 }
 
-type BusStopSearchResult = {
+export type BusStopSearchResult = {
     StopName: Name;
     UpdateTime: string;
     VersionID: number;
 }
+
+export type BusOverlay = BusGeo & {
+    Stops: BusStops["Stops"];
+  };
