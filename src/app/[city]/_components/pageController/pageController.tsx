@@ -1,13 +1,14 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useAtomValue } from "jotai";
 import { useSetURLSearchParams } from "~/hooks/useSetURLParams";
+import { pageAtom } from "~/state/bus";
 
 export default function PageController() {
   // const [page, setPage] = useAtom(BusAtom.pageAtom);
-  const searchParams = useSearchParams()
+  
   const setSearchParams = useSetURLSearchParams()
-  const page = searchParams.get("page") ?? ""
+  const page = useAtomValue(pageAtom)
 
   return (
     <div className="absolute left-[50vw] top-2 box-border flex h-8 -translate-x-[50%] rounded-xl bg-white text-sm text-black md:top-[calc(100vh-2.5rem)]">

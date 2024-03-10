@@ -12,7 +12,7 @@ export const toggleStop = atom<{
 export const openDrawerAtom = atom(false)
 export const openStationPopupAtom = atom(false)
 export const noteAtom = atomWithStorage("note", "")
-
+export const pageAtom = atom("")
 type overlayType = BusGeo & {
     Stops: BusStops["Stops"]
 }

@@ -18,19 +18,21 @@ import { useOverlay } from "~/hooks/useOverlay";
 import { useSearchParams } from "next/navigation";
 import { useSetURLSearchParams } from "~/hooks/useSetURLParams";
 
-export default function BusCard({city}:{city:string}) {
+export default function BusCard({ city }: { city: string }) {
   // const [direction, setDirection] = useAtom(BusAtom.directionAtom);
   // const [bus] = useAtom(BusAtom.busAtom);
-  const searchParams = useSearchParams()
-  const bus = searchParams.get("bus") ?? ""
-  const direction = searchParams.get("direction") ?? ""
+  const searchParams = useSearchParams();
+  const bus = searchParams.get("bus") ?? "";
+  const [direction, setDirection] = useState(
+    searchParams.get("direction") ?? "",
+  );
   const [headSign] = useAtom(BusAtom.headSignAtom);
   const [, setOpen] = useAtom(BusAtom.openDrawerAtom);
   // const [, setPage] = useAtom(BusAtom.pageAtom);
   // const city = useSearchParams().get("city") ?? "Taichung";
-  const station = searchParams.get("station") ?? ""
+  const station = searchParams.get("station") ?? "";
   // const [station, setStation] = useAtom(BusAtom.stationAtom);
-  const setSearchParams = useSetURLSearchParams()
+  const setSearchParams = useSetURLSearchParams();
   const [seconds, setSeconds] = useState(14);
   const [busStops] = useAtom(BusAtom.busStopsAtom);
   const [busOverlay] = useAtom(BusAtom.overlayAtom);
@@ -100,10 +102,15 @@ export default function BusCard({city}:{city:string}) {
         >
           <button
             className={`h-8	 truncate rounded-md p-1 text-center font-semibold transition ${isOneWay ? "w-full" : ""} z-20`}
-            onClick={() => setSearchParams([{
-              key: "direction",
-              value: "0"
-            }])}
+            onClick={() => {
+              setDirection("0");
+              setSearchParams([
+                {
+                  key: "direction",
+                  value: "0",
+                },
+              ]);
+            }}
           >
             {headto0 ? `往${headto0}` : " "}
           </button>
@@ -112,10 +119,15 @@ export default function BusCard({city}:{city:string}) {
           ) : (
             <button
               className={`z-20 h-8 truncate rounded-md p-1 text-center font-semibold transition`}
-              onClick={() => setSearchParams([{
-              key: "direction",
-              value: "1"
-            }])}
+              onClick={() => {
+                setDirection("1")
+                setSearchParams([
+                  {
+                    key: "direction",
+                    value: "1",
+                  },
+                ]);
+              }}
             >
               {headto1 ? `往${headto1}` : " "}
             </button>
@@ -132,19 +144,10 @@ export default function BusCard({city}:{city:string}) {
         <ScrollArea className="w-full">
           <div className="flex w-full flex-col gap-1 p-1">
             {direction === "0" && (
-              <StopList
-                stops={busStops0}
-                station={station}
-                list={direction0}
-                
-              />
+              <StopList stops={busStops0} station={station} list={direction0} />
             )}
             {direction === "1" && (
-              <StopList
-                stops={busStops1}
-                station={station}
-                list={direction1}
-              />
+              <StopList stops={busStops1} station={station} list={direction1} />
             )}
           </div>
         </ScrollArea>
@@ -163,7 +166,7 @@ const StopList = ({
   stops?: BusStops["Stops"];
 }) => {
   const [t, setToggleStop] = useAtom(BusAtom.toggleStop);
-  const setSearchParams = useSetURLSearchParams()
+  const setSearchParams = useSetURLSearchParams();
   if (!list) {
     return "";
   }
@@ -216,13 +219,16 @@ const StopList = ({
                     onClick={() => {
                       // setStation(item.StopName.Zh_tw);
                       // setPage("station");
-                      setSearchParams([{
-                        key: "station",
-                        value: item.StopName.Zh_tw
-                      }, {
-                        key: "page",
-                        value: "station"
-                      }])
+                      setSearchParams([
+                        {
+                          key: "station",
+                          value: item.StopName.Zh_tw,
+                        },
+                        {
+                          key: "page",
+                          value: "station",
+                        },
+                      ]);
                     }}
                   >
                     <span>查看站牌</span>

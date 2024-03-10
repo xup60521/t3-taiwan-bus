@@ -6,7 +6,7 @@ import BusCard from "~/app/[city]/_components/card/busCard"
 import { useEffect, useState } from "react"
 import PageController from "~/app/[city]/_components/pageController/pageController"
 import * as BusAtom from "~/state/bus"
-import { useAtom } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import StationCard from "~/app/[city]/_components/card/stationCard"
 import PopupSection from "~/app/[city]/_components/popup/PopupSetStation"
 import NoteCard from "./_components/card/noteCard"
@@ -14,13 +14,16 @@ import { getAllStop } from "~/server_action/getAllStop"
 import OverlayCard from "./_components/card/overlayCard"
 import { Toaster } from "~/components/ui/toaster"
 import { useSearchParams } from "next/navigation"
+import { useHydrateAtoms } from "jotai/utils"
 
 const Map = dynamic(()=>import("~/app/[city]/_components/map/map"))
 
 export default function Bus({city}:{city:string}) {
-
     const searchParams = useSearchParams()
-    const page = searchParams.get("page") ?? "bus"
+    useHydrateAtoms([[
+        BusAtom.pageAtom, searchParams.get("page") ?? ""
+    ]])
+    const page = useAtomValue(BusAtom.pageAtom)
     const [openPopup] = useAtom(BusAtom.openStationPopupAtom)
     const [initBusList, setinitBusList] = useState<BusList[] | null>(null)
 
@@ -39,10 +42,22 @@ export default function Bus({city}:{city:string}) {
             <main className={`${openPopup ? "blur" : ""} transition-all box-border w-screen h-screen bg-slate-800 text-white overflow-hidden flex-col flex`}>
                 <DrawerSection initBusList={initBusList} /> 
                 <Map city={city}  />
-                {page==="bus" && <BusCard city={city} />}
+                {/* {page==="bus" && <BusCard city={city} />}
                 {page==="station" && <StationCard city={city} />}
                 {page==="note" && <NoteCard />}
-                {page==="overlay" && <OverlayCard />}
+                {page==="overlay" && <OverlayCard />} */}
+                {(()=>{
+                    if (page === "station") {
+                        return <StationCard city={city} />
+                    }
+                    if (page === "note") {
+                        return <NoteCard />
+                    }
+                    if (page === "overlay") {
+                        return <OverlayCard />
+                    }
+                    return <BusCard city={city} />
+                })()}
                 <PageController />  
                 <PopupSection city={city} />
                 <Toaster />
