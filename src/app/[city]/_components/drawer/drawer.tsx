@@ -15,6 +15,8 @@ import {
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { ScrollArea } from "~/components/ui/scroll-area"
+import { useSearchParams } from "next/navigation"
+import { useSetURLSearchParams } from "~/hooks/useSetURLParams"
 
 export default function DrawerSection({
     initBusList
@@ -25,11 +27,13 @@ export default function DrawerSection({
     const [qString, setQString] = useState("")
     const inputRef = useRef<HTMLInputElement>(null)
     const closeBtnRef = useRef<HTMLButtonElement>(null)
-    const [bus, setBus] = useAtom(BusAtom.busAtom)
-    const [, setDirection] = useAtom(BusAtom.directionAtom)
+    // const [bus, setBus] = useAtom(BusAtom.busAtom)
+    const searchParams = useSearchParams()
+    const bus = searchParams.get("bus") ?? ""
+    // const [, setDirection] = useAtom(BusAtom.directionAtom)
     const [, setHeadSign] = useAtom(BusAtom.headSignAtom)
     const [drawerOpen, setDrawerOpen] = useAtom(BusAtom.openDrawerAtom)
-
+    const setSearchParams = useSetURLSearchParams()
     const data = structuredClone(initBusList).sort((a,b)=>Number(RNN(a.RouteName.Zh_tw)) - Number(RNN(b.RouteName.Zh_tw))).map(item=>{
         const headSign = `${item.RouteName.Zh_tw} ${item.SubRoutes[0].Headsign ?? ""}`
         return {
@@ -72,9 +76,16 @@ export default function DrawerSection({
                                     <div 
                                         key={item.SubRoutes[0].SubRouteName.Zh_tw} 
                                         onClick={()=>{
-                                            setBus(item.RouteName.Zh_tw)
+                                            // setBus(item.RouteName.Zh_tw)
                                             
-                                            setDirection("0")
+                                            // setDirection("0")
+                                            setSearchParams([{
+                                                key: "bus",
+                                                value: item.RouteName.Zh_tw
+                                            },{
+                                                key: "direction",
+                                                value: "0"
+                                            }])
                                             closeBtnRef.current?.click()
                                             setQString("")
                                         }}

@@ -11,12 +11,13 @@ import * as BusAtom from "~/state/bus";
 
 export default function ShowMarker({
   item,
+  station
 }: {
   item: Unpacked<BusStops["Stops"]>;
+  station: string
 }) {
   const ref = useRef<L.Marker>(null);
   const [toggleStop] = useAtom(BusAtom.toggleStop);
-  const [station] = useAtom(BusAtom.stationAtom);
   const icon = new Icon({
     iconUrl: "pin_inv.png",
     iconSize: [16, 48],

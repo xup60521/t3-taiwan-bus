@@ -18,7 +18,7 @@ export default function BusRoute({
 
   return (
     <main className="flex h-screen w-screen flex-col overflow-hidden md:flex-row">
-      <Map city={searchParams.city} />
+      <Map />
       <div className="h-[50vh] w-screen bg-white md:h-screen md:w-[25rem]"></div>
     </main>
   );

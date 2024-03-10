@@ -37,14 +37,14 @@ export default function SelectCity({
                 <Link
                   className="rounded-lg bg-sky-500 p-2 px-6 font-bold text-white transition-all hover:bg-sky-400"
                   key={item.value}
-                  href={`/bus?city=${item.value}`}
+                  href={`/${item.value}`}
                 >
                   進入
                 </Link>
                 <Link
                   key={`routemap ${item.value}`}
                   className="rounded-lg bg-sky-500 p-2 px-6 font-bold text-white transition-all hover:bg-sky-400"
-                  href={`/route_map?city=${item.value}`}
+                  href={`/route_map`}
                 >
                   To Route Map
                 </Link>

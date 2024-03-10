@@ -1,13 +1,15 @@
 'use client'
 
 import { useAtom } from "jotai";
+import { useSearchParams } from "next/navigation";
 import { toast } from "~/components/ui/use-toast";
 import * as BusAtom from "~/state/bus"
 
 export const useOverlay = () => {
     const [busStops] = useAtom(BusAtom.busStopsAtom);
-    const [bus] = useAtom(BusAtom.busAtom)
-    const [direction] = useAtom(BusAtom.directionAtom)
+    const searchParams = useSearchParams()
+    const bus = searchParams.get("bus") ?? ""
+    const direction = searchParams.get("direction") ?? ""
     const [busShape] = useAtom(BusAtom.busShapeAtom);
     const [busOverlay, setBusOverlay] = useAtom(BusAtom.overlayAtom);
     const add_remove_overlay = () => {

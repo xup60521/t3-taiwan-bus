@@ -2,7 +2,6 @@
 import {
   MapContainer,
   TileLayer,
-  Polyline,
   Tooltip,
   useMap,
   Marker,
@@ -20,14 +19,15 @@ import { Icon } from "leaflet";
 import type L from "leaflet";
 import seedrandom from "seedrandom";
 import ShowPolyline from "./polyline";
+import { type ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 
-export default function Map() {
+export default function Map({city}:{city:string}) {
   const position = useMemo(
     () => ({ lat: 24.137396608878987, lng: 120.68692065044608 }), // [緯度, 經度]
     [],
   );
-  const city = useAtomValue(BusAtom.cityAtom);
-  const bus = useAtomValue(BusAtom.busAtom);
+  const searchParams = useSearchParams()
+  const bus = searchParams.get("bus") ?? ""
   const setBusShape = useSetAtom(BusAtom.busShapeAtom);
   const setBusStops = useSetAtom(BusAtom.busStopsAtom);
   const baselayers = [
@@ -104,9 +104,9 @@ export default function Map() {
         className="absolute right-0"
       />
       <FlyToCurrent />
-      <ShowPolyLines />
-      <ShowOverlayPolylines />
-      <ShowStops />
+      <ShowPolyLines searchParams={searchParams} />
+      <ShowOverlayPolylines searchParams={searchParams} />
+      <ShowStops searchParams={searchParams} />
       <ShowOverlayStops />
       <LayersControl position="topright">
         {baselayers.map(d => {
@@ -149,9 +149,13 @@ const FlyToCurrent = () => {
   return <></>;
 };
 
-const ShowPolyLines = () => {
-  const bus = useAtomValue(BusAtom.busAtom);
-  const direction = useAtomValue(BusAtom.directionAtom);
+const ShowPolyLines = ({
+  searchParams
+}:{
+  searchParams: ReadonlyURLSearchParams
+}) => {
+  const bus = searchParams.get("bus") ?? ""
+  const direction = searchParams.get("direction") ?? ""
   const busStops = useAtomValue(BusAtom.busStopsAtom);
   const busShape = useAtomValue(BusAtom.busShapeAtom);
   const map = useMap();
@@ -225,9 +229,13 @@ const ShowPolyLines = () => {
   return "";
 };
 
-const ShowOverlayPolylines = () => {
-  const [bus] = useAtom(BusAtom.busAtom);
-  const [direction] = useAtom(BusAtom.directionAtom);
+const ShowOverlayPolylines = ({
+  searchParams
+}:{
+  searchParams: ReadonlyURLSearchParams
+}) => {
+  const bus = searchParams.get("bus") ?? ""
+  const direction = searchParams.get("direction") ?? ""
   const [busOverlay] = useAtom(BusAtom.overlayAtom);
 
   return (
@@ -284,9 +292,14 @@ const ShowOverlayPolylines = () => {
   );
 };
 
-const ShowStops = () => {
-  const [bus] = useAtom(BusAtom.busAtom);
-  const [direction] = useAtom(BusAtom.directionAtom);
+const ShowStops = ({
+  searchParams
+}:{
+  searchParams: ReadonlyURLSearchParams
+}) => {
+  const bus = searchParams.get("bus") ?? ""
+  const direction = searchParams.get("direction") ?? ""
+  const station = searchParams.get("station") ?? ""
   const busStops = useAtomValue(BusAtom.busStopsAtom);
 
   if (!bus || direction === "") {
@@ -304,6 +317,7 @@ const ShowStops = () => {
             <ShowMarker
               item={item}
               key={`${item.StopSequence} ${item.StopName.Zh_tw}`}
+              station={station}
             />
           );
         })}
@@ -316,14 +330,11 @@ const ShowStops = () => {
 
 const ShowOverlayStops = () => {
   const [busOverlay] = useAtom(BusAtom.overlayAtom);
-  // const [busStops] = useAtom(BusAtom.busStopsAtom);
-  // const busStopFlat = busStops?.map(d => d.Stops).flat().map(d => d.StopName.Zh_tw)
   const ref = useRef<L.Marker>(null);
   const flatall = busOverlay.map((d) => d.Stops).flat();
   const flatName = flatall
     .map((d) => d.StopName.Zh_tw)
     .filter((item, index, arr) => arr.indexOf(item) === index);
-  // const filteredOverlap = flatName.filter(name => !busStopFlat?.find(item => item === name))
   const icon = new Icon({
     iconUrl: "pin3.png",
     iconSize: [16, 16],

@@ -1,34 +1,49 @@
 "use client";
 
-import { useAtom } from "jotai";
-import * as BusAtom from "~/state/bus";
+import { useSearchParams } from "next/navigation";
+import { useSetURLSearchParams } from "~/hooks/useSetURLParams";
 
 export default function PageController() {
-  const [page, setPage] = useAtom(BusAtom.pageAtom);
+  // const [page, setPage] = useAtom(BusAtom.pageAtom);
+  const searchParams = useSearchParams()
+  const setSearchParams = useSetURLSearchParams()
+  const page = searchParams.get("page") ?? ""
 
   return (
     <div className="absolute left-[50vw] top-2 box-border flex h-8 -translate-x-[50%] rounded-xl bg-white text-sm text-black md:top-[calc(100vh-2.5rem)]">
       <button
         className="z-20 h-8 w-12 text-center font-bold"
-        onClick={() => setPage("bus")}
+        onClick={() => setSearchParams([{
+          key: "page",
+          value: "bus"
+        }])}
       >
         公車
       </button>
       <button
         className="z-20 h-8 w-12 text-center font-bold"
-        onClick={() => setPage("station")}
+        onClick={() => setSearchParams([{
+          key: "page",
+          value: "station"
+        }])}
       >
         站牌
       </button>
       <button
         className="z-20 h-8 w-12 text-center font-bold"
-        onClick={() => setPage("note")}
+        onClick={() => setSearchParams([{
+          key: "page",
+          value: "note"
+        }])}
       >
         筆記
       </button>
       <button
         className="z-20 h-8 w-12 text-center font-bold"
-        onClick={() => setPage("overlay")}
+        onClick={() => setSearchParams([{
+          key: "page",
+          value: "overlay"
+        }])}
       >
         疊加
       </button>

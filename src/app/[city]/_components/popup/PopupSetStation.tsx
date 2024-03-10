@@ -1,5 +1,5 @@
 "use client";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import * as BusAtom from "~/state/bus";
 import Popup from "reactjs-popup";
 import { Input } from "~/components/ui/input";
@@ -8,16 +8,16 @@ import { FaSearch, FaSpinner } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { type BusStopSearchResult } from "~/type/bus";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { useSearchParams } from "next/navigation";
 import { searchStop } from "~/server_action/searchStop";
+import { useSetURLSearchParams } from "~/hooks/useSetURLParams";
 
-export default function PopupSetStation() {
+export default function PopupSetStation({city}: {city: string}) {
   const [open, setOpen] = useAtom(BusAtom.openStationPopupAtom);
   const [result, setResult] = useState<BusStopSearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const setStation = useSetAtom(BusAtom.stationAtom)
+  // const setStation = useSetAtom(BusAtom.stationAtom)
+  const setSearchParams = useSetURLSearchParams()
   const inputRef = useRef<HTMLInputElement>(null);
-  const city = useSearchParams().get("city");
   const handleSearch = async () => {
     if (inputRef.current?.value && city) {
       setLoading(true);
@@ -66,7 +66,10 @@ export default function PopupSetStation() {
                     <div
                       onClick={() => {
                         setOpen(false);
-                        setStation(item);
+                        setSearchParams([{
+                          key: "station",
+                          value: item
+                        }])
                       }}
                       key={`${item}`}
                       className="rounded-md p-2 py-3 transition-all hover:cursor-pointer hover:bg-slate-100"

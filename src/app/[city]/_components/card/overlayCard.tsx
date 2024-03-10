@@ -11,6 +11,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { FiMenu } from "react-icons/fi";
 import { useToast } from "~/components/ui/use-toast";
+import { useSetURLSearchParams } from "~/hooks/useSetURLParams";
 
 const OverlayCard: React.FC = () => {
   return (
@@ -35,10 +36,8 @@ export default OverlayCard;
 
 const OverlayList: React.FC = () => {
   const [busOverlay, setBusOverlay] = useAtom(BusAtom.overlayAtom);
-  const [, setBus] = useAtom(BusAtom.busAtom);
-  const [, setDirection] = useAtom(BusAtom.directionAtom);
-  const [, setPage] = useAtom(BusAtom.pageAtom);
   const { toast } = useToast();
+  const setSearchParams = useSetURLSearchParams()
 
   const handleRemove = (name: string, direction: number, headSign:string) => {
     setBusOverlay((prev) => {
@@ -102,9 +101,19 @@ const OverlayList: React.FC = () => {
                 <DropdownMenuContent>
                   <DropdownMenuItem
                     onClick={() => {
-                      setBus(item.RouteName.Zh_tw);
-                      setDirection(`${item.Direction}`);
-                      setPage("bus");
+                      // setBus(item.RouteName.Zh_tw);
+                      // setDirection(`${item.Direction}`);
+                      // setPage("bus");
+                      setSearchParams([{
+                        key: "bus",
+                        value: item.RouteName.Zh_tw
+                      }, {
+                        key: "direction",
+                        value: `${item.Direction}`
+                      }, {
+                        key: "page",
+                        value: "bus"
+                      }])
                     }}
                   >
                     <span>查看公車</span>

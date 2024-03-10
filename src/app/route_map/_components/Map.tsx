@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
-export default function Map({ city }: { city: string }) {
+export default function Map() {
   const position = useMemo(
     () => ({ lat: 24.137396608878987, lng: 120.68692065044608 }),
     [],
